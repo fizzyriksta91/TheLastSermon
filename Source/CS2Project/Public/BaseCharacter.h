@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "MyCharacter.generated.h"
+#include "BaseCharacter.generated.h"
 
 UCLASS()
-class CS2PROJECT_API AMyCharacter : public ACharacter
+class CS2PROJECT_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AMyCharacter();
+	ABaseCharacter();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,6 +26,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float health = 100.f;
 };
