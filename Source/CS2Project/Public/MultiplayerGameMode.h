@@ -4,14 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "MuliplayerGameMode.generated.h"
+#include "MultiplayerGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CS2PROJECT_API AMuliplayerGameMode : public AGameModeBase
+class CS2PROJECT_API AMultiplayerGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
 	
+
+	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	void AddLocalPlayer();
 };
