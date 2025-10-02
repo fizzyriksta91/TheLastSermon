@@ -33,11 +33,6 @@ void ASplitScreenManager::Tick(float DeltaTime)
 	if (!PC0 || !PC1)
 		return;
 
-	APawn* Pawn0 = PC0->GetPawn();
-	APawn* Pawn1 = PC1->GetPawn();
-	if (!Pawn0 || !Pawn1)
-		return;
-
 	const FVector Loc0 = Pawn0->GetActorLocation();
 	const FVector Loc1 = Pawn1->GetActorLocation();
 	const float Distance = FVector::Dist(Loc0, Loc1);
