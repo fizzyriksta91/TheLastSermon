@@ -4,7 +4,7 @@
 #include "MultiplayerGameMode.h"
 
 #include "EngineUtils.h"
-#include "SplitScreenManager.h"
+#include "SharedCamera.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -19,7 +19,7 @@ void AMultiplayerGameMode::AddLocalPlayer()
 		{
 
 			FString Error;
-			ULocalPlayer* NewPlayer = GameInstance->CreateLocalPlayer(-1, Error, true);
+			ULocalPlayer* NewPlayer = GameInstance->CreateLocalPlayer(0, Error, true);
 			if (NewPlayer)
 			{
 				UE_LOG(LogTemp, Display, TEXT("Local player added"));
@@ -30,22 +30,10 @@ void AMultiplayerGameMode::AddLocalPlayer()
 				{
 					PlayerControllers.Add(Iterator->Get());
 				}
-				//Find or spawn the SplitScreenManager
-				for (TActorIterator<ASplitScreenManager> It(GetWorld()); It; ++It)
-				{
-					ASplitScreenManager* SplitScreenManager= *It;
-					if (SplitScreenManager)
-					{
-						SplitScreenManager->SetPlayers(PlayerControllers);
-						break;
-					}
-					
-				}
 			}
 			else
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Failed to add local player"));
-				UE_LOG(LogTemp, Warning, TEXT("ViewportClient: %s"), *GetWorld()->GetGameViewport()->GetClass()->GetName());
 			}
 		}
 	}	

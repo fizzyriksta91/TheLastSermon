@@ -4,22 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SplitScreenManager.generated.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "SharedCamera.generated.h"
+
 
 UCLASS()
-class CS2PROJECT_API ASplitScreenManager : public AActor
+class CS2PROJECT_API ASharedCamera : public AActor
 {
 	GENERATED_BODY()
-
-	UPROPERTY()
-	TArray<APlayerController*> Players;
-
-	UPROPERTY()
-	float SplitDistance{ 500.0f };
+	
 	
 public:	
 	// Sets default values for this actor's properties
-	ASplitScreenManager();
+	ASharedCamera();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraComponent* CameraComponent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,8 +32,4 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	UFUNCTION(BlueprintCallable)
-	void SetPlayers(const TArray<APlayerController*>& InPlayers);
-	
-
 };
