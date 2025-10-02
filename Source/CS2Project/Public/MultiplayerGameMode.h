@@ -19,4 +19,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void AddLocalPlayer();
+
+	
 };
