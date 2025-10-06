@@ -20,10 +20,21 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UStatsComponentRH* StatsComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTraceComponentRH* TraceComp;
+
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// Makes the character face its movement direction
+	void FaceMovementDirection();
+
+	FRotator LastMovementRotation;
+
+	bool bHasMovedBefore { false };
 
 public:	
 	// Called every frame
@@ -33,4 +44,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual float GetDamage() override;
+	
 };
