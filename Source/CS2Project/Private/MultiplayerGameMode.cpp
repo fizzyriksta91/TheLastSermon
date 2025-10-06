@@ -19,7 +19,7 @@ void AMultiplayerGameMode::AddLocalPlayer()
 		{
 
 			FString Error;
-			ULocalPlayer* NewPlayer = GameInstance->CreateLocalPlayer(0, Error, true);
+			ULocalPlayer* NewPlayer = GameInstance->CreateLocalPlayer(-1, Error, true);
 			if (NewPlayer)
 			{
 				UE_LOG(LogTemp, Display, TEXT("Local player added"));

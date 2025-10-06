@@ -4,17 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/CombatRH.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
-class CS2PROJECT_API ABaseCharacter : public ACharacter
+class CS2PROJECT_API ABaseCharacter : public ACharacter , public ICombatRH
 {
 	GENERATED_BODY()
+
+	
 
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
-
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UStatsComponentRH* StatsComp;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -26,4 +32,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual float GetDamage() override;
 };
