@@ -39,18 +39,25 @@ void UDodgeComponentRH::Dodge()
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 	if (Character && !bIsDodging)
 	{
-		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+		float CurrentTime = GetWorld()->GetTimeSeconds();
+		if (CurrentTime - LastDodgeTime < DodgeCooldown)
+		{
+			return;
+		}
 
+		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 		if (AnimInstance == nullptr)
 			return;
-		{
-			bIsDodging = true;
-
-			AnimInstance->Montage_Play(DodgeMontage);
-			Character->LaunchCharacter(Character->GetActorForwardVector() * 2000.f, true, true);
-			UE_LOG(LogTemp, Warning, TEXT("Dodge Complete"));
-		}
 		
+		bIsDodging = true;
+
+		AnimInstance->Montage_Play(DodgeMontage);
+		UE_LOG(LogTemp, Warning, TEXT("Dodge Complete"));
+		
+			// You can add additional logic here, such as applying invincibility frames or movement adjustments
+
+		LastDodgeTime = CurrentTime;
+		bIsDodging = false;
 	}
 }
 

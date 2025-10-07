@@ -12,6 +12,10 @@ class CS2PROJECT_API UDodgeComponentRH : public UActorComponent
 {
 	GENERATED_BODY()
 
+	float DodgeCooldown { 3.0f };
+	
+	float LastDodgeTime { -FLT_MAX };
+
 public:	
 	// Sets default values for this component's properties
 	UDodgeComponentRH();
@@ -29,7 +33,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* DodgeMontage;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Animations")
+	
 	bool bIsDodging { false };
 };
