@@ -41,10 +41,10 @@ public:
 	void ReduceHealth(float Amount);
 
 	UFUNCTION(BlueprintCallable)
-	void ReduceStamina(float Amount);
+	void ReduceCooldown(float Amount);
 	
 	UFUNCTION(BlueprintCallable)
-	void RegenStamina();
+	void RegenCooldown();
 	
 	UFUNCTION()
 	void EnableRegen();

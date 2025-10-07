@@ -11,7 +11,7 @@ enum EStatsRH
 	Health UMETA(DisplayName = "Health"),
 	MaxHealth UMETA(DisplayName = "Max Health"),
 	Strength UMETA(DisplayName = "Strength"),
-	Stamina	UMETA(DisplayName = "Stamina"),
-	MaxStamina UMETA(DisplayName = "Max Stamina"),
+	Cooldown UMETA(DisplayName = "Cooldown"),
+	MaxCooldown UMETA(DisplayName = "Max Cooldown"),
 	MeleeRange UMETA(DisplayName = "MeleeRange")
 };

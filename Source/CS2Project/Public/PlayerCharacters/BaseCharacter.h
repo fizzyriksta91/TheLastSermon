@@ -24,6 +24,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UTraceComponentRH* TraceComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UDodgeComponentRH* DodgeComp;
+
 	
 protected:
 	// Called when the game starts or when spawned

@@ -44,12 +44,12 @@ void UStatsComponentRH::ReduceHealth(float Amount)
 		Stats[EStatsRH::Health], 0, Stats[EStatsRH::MaxHealth]);
 }
 
-void UStatsComponentRH::ReduceStamina(float Amount)
+void UStatsComponentRH::ReduceCooldown(float Amount)
 {
-	Stats[EStatsRH::Stamina] -= Amount;
+	Stats[EStatsRH::Cooldown] -= Amount;
 
-	Stats[EStatsRH::Stamina] = UKismetMathLibrary::FClamp(
-		Stats[EStatsRH::Stamina], 0, Stats[EStatsRH::MaxStamina]);
+	Stats[EStatsRH::Cooldown] = UKismetMathLibrary::FClamp(
+		Stats[EStatsRH::Cooldown], 0, Stats[EStatsRH::MaxCooldown]);
 
 	bCanRegen = false;
 
@@ -60,14 +60,14 @@ void UStatsComponentRH::ReduceStamina(float Amount)
 		this, StaminaDelayDuration, FunctionInfo);
 }
 
-void UStatsComponentRH::RegenStamina()
+void UStatsComponentRH::RegenCooldown()
 {
 	if (!bCanRegen) { return; }
 
-	Stats[EStatsRH::Stamina] += StaminaRegenRate * GetWorld()->GetDeltaSeconds();
+	Stats[EStatsRH::Cooldown] += StaminaRegenRate * GetWorld()->GetDeltaSeconds();
 
-	Stats[EStatsRH::Stamina] = UKismetMathLibrary::FClamp(
-		Stats[EStatsRH::Stamina], 0, Stats[EStatsRH::MaxStamina]);
+	Stats[EStatsRH::Cooldown] = UKismetMathLibrary::FClamp(
+		Stats[EStatsRH::Cooldown], 0, Stats[EStatsRH::MaxCooldown]);
 }
 
 void UStatsComponentRH::EnableRegen()
