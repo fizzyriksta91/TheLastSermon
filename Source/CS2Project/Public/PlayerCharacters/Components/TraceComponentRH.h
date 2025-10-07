@@ -33,7 +33,7 @@ public:
 	UTraceComponentRH();
 
 	UPROPERTY(VisibleAnywhere)
-	bool bIsAttacking{ false };
+	bool bIsAttacking{ true };
 
 protected:
 	// Called when the game starts

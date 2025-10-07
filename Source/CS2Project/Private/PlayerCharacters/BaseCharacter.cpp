@@ -18,6 +18,7 @@ ABaseCharacter::ABaseCharacter()
 	StatsComp = CreateDefaultSubobject<UStatsComponentRH>(TEXT("Stats Component"));
 	TraceComp = CreateDefaultSubobject<UTraceComponentRH>(TEXT("Trace Component"));
 	DodgeComp = CreateDefaultSubobject<UDodgeComponentRH>(TEXT("Dodge Component"));
+	
 } 
 
 // Called when the game starts or when spawned
