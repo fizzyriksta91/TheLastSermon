@@ -22,6 +22,8 @@ void UMeleeCombatComponentRH::BeginPlay()
 	Super::BeginPlay();
 
 	CharacterRef =  GetOwner<ACharacter>();
+
+	LastHeavyAttackTime = -HeavyAttackCooldown;
 }
 
 
@@ -61,6 +63,20 @@ void UMeleeCombatComponentRH::ResetAttack()
 void UMeleeCombatComponentRH::ResetCombatCounter()
 {
 	ComboCounter = 0;
+}
+
+void UMeleeCombatComponentRH::PerformHeavyAttack()
+{
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+	if (CurrentTime - LastHeavyAttackTime < HeavyAttackCooldown) { return; }
+
+	if (!bCanAttack) { return; }
+	
+	bCanAttack = false;
+
+	LastHeavyAttackTime = CurrentTime;
+	
+	CharacterRef->PlayAnimMontage(HeavyAttackMontage);
 }
 
 

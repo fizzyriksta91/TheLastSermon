@@ -15,18 +15,28 @@ class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	TArray<UAnimMontage*> LightComboMontages;
 
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* HeavyAttackMontage;
+
 	UPROPERTY()
 	ACharacter* CharacterRef;
 
-	UPROPERTY(VisibleAnywhere, Category = "Animations")
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	int ComboCounter { 0 };
 
-	UPROPERTY(VisibleAnywhere, Category = "Animations")
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	bool bCanAttack { true };
 
 	FTimerHandle ComboResetTimerHandle;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
 	float ComboResetDelay { 1.5f };
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	float LastHeavyAttackTime { 0.0f };
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float HeavyAttackCooldown { 10.0f };
 
 public:	
 	// Sets default values for this component's properties
@@ -47,6 +57,9 @@ public:
 	void ResetAttack();
 
 	void ResetCombatCounter();
+
+	UFUNCTION(BlueprintCallable)
+	void PerformHeavyAttack();
 	
 	
 
