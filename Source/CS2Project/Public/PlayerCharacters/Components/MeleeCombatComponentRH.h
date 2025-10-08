@@ -11,6 +11,22 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 {
 	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	TArray<UAnimMontage*> LightComboMontages;
+
+	UPROPERTY()
+	ACharacter* CharacterRef;
+
+	UPROPERTY(VisibleAnywhere, Category = "Animations")
+	int ComboCounter { 0 };
+
+	UPROPERTY(VisibleAnywhere, Category = "Animations")
+	bool bCanAttack { true };
+
+	FTimerHandle ComboResetTimerHandle;
+
+	float ComboResetDelay { 1.5f };
 
 public:	
 	// Sets default values for this component's properties
@@ -26,9 +42,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PerformLightComboAttack();
-	
-	bool bIsAttacking { false };
 
-	UPROPERTY(EditAnywhere, Category = "Animations")
-	TArray<UAnimMontage*> LightComboMontages; 
+	UFUNCTION(BlueprintCallable)
+	void ResetAttack();
+
+	void ResetCombatCounter();
+	
+	
+
+	
 };

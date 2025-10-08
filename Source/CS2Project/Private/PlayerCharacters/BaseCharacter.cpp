@@ -3,7 +3,7 @@
 
 #include "PlayerCharacters/BaseCharacter.h"
 
-#include "DodgeComponentRH.h"
+#include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 

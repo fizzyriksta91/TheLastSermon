@@ -4,6 +4,8 @@
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 
 #include "GameFramework/Character.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "PlayerCharacters/Interfaces/PlayerRH.h"
 
 // Sets default values for this component's properties
 UMeleeCombatComponentRH::UMeleeCombatComponentRH()
@@ -11,8 +13,6 @@ UMeleeCombatComponentRH::UMeleeCombatComponentRH()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -21,8 +21,7 @@ void UMeleeCombatComponentRH::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	CharacterRef =  GetOwner<ACharacter>();
 }
 
 
@@ -30,35 +29,39 @@ void UMeleeCombatComponentRH::BeginPlay()
 void UMeleeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void UMeleeCombatComponentRH::PerformLightComboAttack()
 {
-	ACharacter* Character = Cast<ACharacter>(GetOwner());
-	if (Character && !bIsAttacking && LightComboMontages.Num() > 0)
-	{
-		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-		if (AnimInstance == nullptr)
-			return;
-		
-		bIsAttacking = true;
-		for (UAnimMontage* Montage : LightComboMontages)
-		{
-			if (Montage == nullptr)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("LightComboMontages contains a null montage!"));
-				return;
-			}
-		}
-		// Play the first montage in the array
-		AnimInstance->Montage_Play(LightComboMontages[0]);
-		UE_LOG(LogTemp, Warning, TEXT("Light Combo Attack Performed"));
+	if (!bCanAttack) { return; }
+	
+	bCanAttack = false;
+	
+	CharacterRef->PlayAnimMontage(LightComboMontages[ComboCounter]);
+	
+	ComboCounter++;
+	
+	int MaxCombo{ LightComboMontages.Num() };
+	
+	ComboCounter = UKismetMathLibrary::Wrap(
+		ComboCounter, -1, (MaxCombo -1));
 
-		// You can add additional logic here, such as applying damage or effects
-
-		bIsAttacking = false;
-	}
+	//Start/Reset Timer to reset combo counter
+	GetWorld()->GetTimerManager().ClearTimer(ComboResetTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(
+		ComboResetTimerHandle, this, &UMeleeCombatComponentRH::ResetCombatCounter,
+		ComboResetDelay, false);
 }
+
+void UMeleeCombatComponentRH::ResetAttack()
+{
+	bCanAttack = true;
+}
+
+void UMeleeCombatComponentRH::ResetCombatCounter()
+{
+	ComboCounter = 0;
+}
+
+
 
