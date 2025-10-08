@@ -5,6 +5,7 @@
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 
 #include "GameFramework/Character.h"
+#include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 
 // Sets default values for this component's properties
 UDodgeComponentRH::UDodgeComponentRH()
@@ -37,10 +38,17 @@ void UDodgeComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UDodgeComponentRH::Dodge()
 {
+	UMeleeCombatComponentRH* MeleeCombatComp = GetOwner()->FindComponentByClass<UMeleeCombatComponentRH>();
+
+	if (MeleeCombatComp)
+	{
+		bool bCanAttack = MeleeCombatComp->bCanAttack;
+	}
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
-	if (Character && !bIsDodging)
+	if (Character && !bIsDodging && MeleeCombatComp && MeleeCombatComp->bCanAttack)
 	{
 		float CurrentTime = GetWorld()->GetTimeSeconds();
+		
 		if (CurrentTime - LastDodgeTime < DodgeCooldown)
 		{
 			return;
@@ -50,15 +58,32 @@ void UDodgeComponentRH::Dodge()
 		if (AnimInstance == nullptr)
 			return;
 		
-		bIsDodging = true;
-
+		float DodgeDuration = 0.5f; //DodgeMontage->GetPlayLength();
+		
 		AnimInstance->Montage_Play(DodgeMontage);
+		
 		UE_LOG(LogTemp, Warning, TEXT("Dodge Complete"));
 		
-			// You can add additional logic here, such as applying invincibility frames or movement adjustments
-
+		bIsDodging = true;
+		
+        MeleeCombatComp->bCanAttack = false;
+		
 		LastDodgeTime = CurrentTime;
-		bIsDodging = false;
+		
+		// You can add additional logic here, such as applying invincibility frames or movement adjustments
+
+		GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle,
+			this, &UDodgeComponentRH::OnDodgeFinished, DodgeDuration, false);
+	}
+}
+
+void UDodgeComponentRH::OnDodgeFinished()
+{
+	bIsDodging = false;
+	UMeleeCombatComponentRH* MeleeCombatComp = GetOwner()->FindComponentByClass<UMeleeCombatComponentRH>();
+	if (MeleeCombatComp)
+	{
+		MeleeCombatComp->bCanAttack = true;
 	}
 }
 

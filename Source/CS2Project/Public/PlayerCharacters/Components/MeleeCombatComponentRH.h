@@ -24,8 +24,7 @@ class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	int ComboCounter { 0 };
 
-	UPROPERTY(VisibleAnywhere, Category = "Combat")
-	bool bCanAttack { true };
+	
 
 	FTimerHandle ComboResetTimerHandle;
 
@@ -61,7 +60,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PerformHeavyAttack();
 	
-	
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	bool bCanAttack { true };
 
 	
 };

@@ -16,6 +16,8 @@ class CS2PROJECT_API UDodgeComponentRH : public UActorComponent
 	
 	float LastDodgeTime { -FLT_MAX };
 
+	FTimerHandle DodgeTimerHandle;
+
 public:	
 	// Sets default values for this component's properties
 	UDodgeComponentRH();
@@ -35,4 +37,6 @@ public:
 	UAnimMontage* DodgeMontage;
 	
 	bool bIsDodging { false };
+
+	void OnDodgeFinished();
 };
