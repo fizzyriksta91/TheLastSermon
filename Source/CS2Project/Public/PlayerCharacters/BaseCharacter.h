@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/CombatRH.h"
+#include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -27,6 +28,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UDodgeComponentRH* DodgeComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Combat")
+	TMap<TEnumAsByte<EDamageTypesRH>, float> DamageValues;
+
 	
 protected:
 	// Called when the game starts or when spawned
@@ -46,6 +50,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual float GetDamage() override;
+	virtual float GetDamage(EDamageTypesRH DamageType) override;
 	
 };

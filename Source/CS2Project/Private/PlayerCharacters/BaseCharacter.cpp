@@ -70,9 +70,17 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	
 }
 
-float ABaseCharacter::GetDamage()
+float ABaseCharacter::GetDamage(EDamageTypesRH DamageType)
 {
-	return StatsComp->Stats[EStatsRH::Strength];
+	float Strength = StatsComp->Stats[EStatsRH::Strength];
+	float Multiplier =2.0f;
+
+	if (DamageValues.Contains(DamageType))
+	{
+		Multiplier = DamageValues[DamageType];
+	}
+
+	return Strength * Multiplier;
 }
 
 

@@ -5,6 +5,7 @@
 
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "PlayerCharacters/Components/TraceComponentRH.h"
 #include "PlayerCharacters/Interfaces/PlayerRH.h"
 
 // Sets default values for this component's properties
@@ -36,6 +37,18 @@ void UMeleeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType
 void UMeleeCombatComponentRH::PerformLightComboAttack()
 {
 	if (!bCanAttack) { return; }
+
+	CurrentDamageType = EDamageTypesRH::LightAttack;
+
+	if (CharacterRef)
+	{
+		auto TraceComp = CharacterRef->FindComponentByClass<UTraceComponentRH>();
+		if (TraceComp)
+		{
+			TraceComp->SetCurrentDamageType(CurrentDamageType);
+			TraceComp->HandleResetAttack();
+		}
+	}
 	
 	bCanAttack = false;
 	
@@ -71,6 +84,18 @@ void UMeleeCombatComponentRH::PerformHeavyAttack()
 	if (CurrentTime - LastHeavyAttackTime < HeavyAttackCooldown) { return; }
 
 	if (!bCanAttack) { return; }
+
+	CurrentDamageType = EDamageTypesRH::HeavyAttack;
+
+	if (CharacterRef)
+	{
+		auto TraceComp = CharacterRef->FindComponentByClass<UTraceComponentRH>();
+		if (TraceComp)
+		{
+			TraceComp->SetCurrentDamageType(CurrentDamageType);
+			TraceComp->HandleResetAttack();
+		}
+	}
 	
 	bCanAttack = false;
 

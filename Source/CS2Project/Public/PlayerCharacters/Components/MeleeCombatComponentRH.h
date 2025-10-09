@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "MeleeCombatComponentRH.generated.h"
 
 
@@ -23,9 +24,7 @@ class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	int ComboCounter { 0 };
-
 	
-
 	FTimerHandle ComboResetTimerHandle;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
@@ -36,6 +35,9 @@ class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float HeavyAttackCooldown { 10.0f };
+
+	UPROPERTY()
+	TEnumAsByte<EDamageTypesRH> CurrentDamageType { EDamageTypesRH::None };
 
 public:	
 	// Sets default values for this component's properties

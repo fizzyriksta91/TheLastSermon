@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PlayerCharacters/FTraceSocketsRH.h"
+#include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "TraceComponentRH.generated.h"
 
 
@@ -35,6 +36,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	bool bIsAttacking{ true };
 
+	UPROPERTY()
+	TEnumAsByte<EDamageTypesRH> CurrentDamageType;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -45,4 +49,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HandleResetAttack();
+
+	void SetCurrentDamageType(EDamageTypesRH InType);
 };

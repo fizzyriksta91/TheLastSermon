@@ -87,7 +87,7 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	ICombatRH* CombatInterface{ Cast<ICombatRH>(GetOwner()) };
 	if (CombatInterface)
 	{
-		CharacterDamage = CombatInterface->GetDamage();
+		CharacterDamage = CombatInterface->GetDamage(CurrentDamageType);
 	}
 
 	FDamageEvent TargetAttackEvent;
@@ -108,5 +108,10 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 void UTraceComponentRH::HandleResetAttack()
 {
 	TargetsToIgnore.Empty();
+}
+
+void UTraceComponentRH::SetCurrentDamageType(EDamageTypesRH InType)
+{
+	CurrentDamageType = InType;
 }
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "UObject/Interface.h"
 #include "CombatRH.generated.h"
 
@@ -20,7 +21,7 @@ class CS2PROJECT_API ICombatRH
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual float GetDamage() { return 0.0f; }
+	virtual float GetDamage(EDamageTypesRH DamageType) { return 0.0f; }
 
 	virtual void Attack() {}
 
