@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "PlayerCharacters/EStatsRH.h"
+#include "PlayerCharacters/Enums/EStatsRH.h"
 #include "StatsComponentRH.generated.h"
 
 
@@ -39,12 +39,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ReduceHealth(float Amount);
-
-	UFUNCTION(BlueprintCallable)
-	void ReduceCooldown(float Amount);
-	
-	UFUNCTION(BlueprintCallable)
-	void RegenCooldown();
 	
 	UFUNCTION()
 	void EnableRegen();
