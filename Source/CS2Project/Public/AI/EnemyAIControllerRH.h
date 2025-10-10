@@ -33,5 +33,7 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* AIPerceptionComponent;
+
+	void InitializeBlackboard();
 	
 };
