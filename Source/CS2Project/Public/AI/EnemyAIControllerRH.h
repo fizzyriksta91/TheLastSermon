@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "perception/AIPerceptionComponent.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "PlayerCharacters/Enums/EEnemyStatesRH.h"
 #include "EnemyAIControllerRH.generated.h"
 
 /**
@@ -18,12 +19,19 @@ class CS2PROJECT_API AEnemyAIControllerRH : public AAIController
 public:
 	AEnemyAIControllerRH();
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+	class UBehaviorTree* BehaviorTreeAsset;
+
+	UPROPERTY()
+	class UBlackboardComponent* BlackboardComp;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<EEnemyStatesRH> InitialState;
+
 protected:
 	virtual void BeginPlay() override;
 	
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* AIPerceptionComponent;
-
 	
 };
