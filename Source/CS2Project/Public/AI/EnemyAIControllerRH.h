@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "PlayerCharacters/Enums/EAISenseRH.h"
 #include "PlayerCharacters/Enums/EEnemyStatesRH.h"
 #include "EnemyAIControllerRH.generated.h"
 
@@ -28,12 +29,23 @@ public:
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EEnemyStatesRH> InitialState;
 
-protected:
-	virtual void BeginPlay() override;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* AIPerceptionComponent;
 
+protected:
+	virtual void BeginPlay() override;
+	
 	void InitializeBlackboard();
+
+	void SetInitialState();
+
+	void SetAttackingState();
+
+	void HandleSensedSight(AActor* Actor);
+
+	bool CanSenseActor(AActor* Actor, EAISenseRH Sense) const;
+
+	UFUNCTION()
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 	
 };
