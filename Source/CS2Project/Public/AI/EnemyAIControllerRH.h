@@ -37,10 +37,12 @@ protected:
 	
 	void InitializeBlackboard();
 
-	void SetInitialState();
+	EEnemyStatesRH GetCurrentState() const;
+
+	void SetIdleState();
 
 	void SetAttackingState();
-
+	
 	void HandleSensedSight(AActor* Actor);
 
 	bool CanSenseActor(AActor* Actor, EAISenseRH Sense) const;

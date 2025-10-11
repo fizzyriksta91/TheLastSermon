@@ -9,6 +9,7 @@ enum EEnemyStatesRH
 {
 	IdleState UMETA(DisplayName = "Idle"),
 	ChasingState UMETA(DisplayName = "Chasing"),
+	InvestigatingState UMETA(DisplayName = "Investigating"),
 	AttackingState UMETA(DisplayName = "Attacking"),
 	FrozenState UMETA(DisplayName = "Frozen"),
 	DeadState UMETA(DisplayName = "Dead")

@@ -71,15 +71,16 @@ void AEnemyAIControllerRH::InitializeBlackboard()
 	if (!BlackboardComp)
 		return;
 	
-	SetInitialState();
+	SetIdleState();
 }
 
-void AEnemyAIControllerRH::SetInitialState()
+void AEnemyAIControllerRH::SetIdleState()
 {
 	if (!BlackboardComp)
 		return;
 	
-	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), EEnemyStatesRH::IdleState);
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"), EEnemyStatesRH::IdleState);
 }
 
 void AEnemyAIControllerRH::SetAttackingState()
@@ -125,10 +126,32 @@ void AEnemyAIControllerRH::SetAttackingState()
 	
 }
 
+EEnemyStatesRH AEnemyAIControllerRH::GetCurrentState() const
+{
+	if (!BlackboardComp)
+		return EEnemyStatesRH::IdleState;
+
+	uint8 CurrentStateValue = BlackboardComp->GetValueAsEnum(TEXT("CurrentState"));
+	return static_cast<EEnemyStatesRH>(CurrentStateValue);
+}
+
 void AEnemyAIControllerRH::HandleSensedSight(AActor* Actor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("HandleSensedSight called for actor: %s"), *Actor->GetName());
-	SetAttackingState();
+	UE_LOG(LogTemp, Warning, TEXT(
+		"HandleSensedSight called for actor: %s"), *Actor->GetName());
+
+	EEnemyStatesRH CurrentState = GetCurrentState();
+	if (CurrentState == EEnemyStatesRH::IdleState)
+	{
+		SetAttackingState();
+		UE_LOG(LogTemp, Warning, TEXT("State changed to AttackingState"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT(
+			"Already in state %d, not switching to attacking"), (int32)CurrentState);
+	}
+	
 }
 
 bool AEnemyAIControllerRH::CanSenseActor(AActor* Actor, EAISenseRH Sense) const
