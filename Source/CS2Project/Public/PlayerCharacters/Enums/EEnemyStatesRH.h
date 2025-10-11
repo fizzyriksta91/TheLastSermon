@@ -7,9 +7,9 @@
 UENUM(BlueprintType)
 enum EEnemyStatesRH
 {
-	Idle UMETA(DisplayName = "Idle"),
-	Chasing UMETA(DisplayName = "Chasing"),
-	Attacking UMETA(DisplayName = "Attacking"),
-	Dead UMETA(DisplayName = "Dead")
+	IdleState UMETA(DisplayName = "Idle"),
+	ChasingState UMETA(DisplayName = "Chasing"),
+	AttackingState UMETA(DisplayName = "Attacking"),
+	DeadState UMETA(DisplayName = "Dead")
 };
 
