@@ -7,6 +7,7 @@
 #include "Interfaces/CombatRH.h"
 #include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "BaseCharacter.generated.h"
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDeath, ABaseCharacter*, DeadCharacter);
 
 UCLASS()
 class CS2PROJECT_API ABaseCharacter : public ACharacter , public ICombatRH
