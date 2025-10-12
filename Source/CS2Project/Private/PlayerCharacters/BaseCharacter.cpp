@@ -3,6 +3,7 @@
 
 #include "PlayerCharacters/BaseCharacter.h"
 
+#include "Perception/AISense_Damage.h"
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
@@ -81,6 +82,19 @@ float ABaseCharacter::GetDamage(EDamageTypesRH DamageType)
 	}
 
 	return Strength * Multiplier;
+}
+
+float ABaseCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(
+		DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	UAISense_Damage::ReportDamageEvent(
+		GetWorld(), this, DamageCauser, ActualDamage,
+		GetActorLocation(),GetActorLocation());
+
+	return ActualDamage;
 }
 
 

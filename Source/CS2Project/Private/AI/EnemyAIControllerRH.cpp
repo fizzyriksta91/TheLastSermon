@@ -59,7 +59,7 @@ void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedAct
 		}
 		if (CanSenseActor(Actor, EAISenseRH::Damage))
 		{
-			// Logic for when the actor causes damage
+			HandleSensedDamage(Actor);
 			UE_LOG(LogTemp, Warning, TEXT("Damage Actor Detected"));
 		}
 	}
@@ -152,6 +152,22 @@ void AEnemyAIControllerRH::HandleSensedSight(AActor* Actor)
 			"Already in state %d, not switching to attacking"), (int32)CurrentState);
 	}
 	
+}
+
+void AEnemyAIControllerRH::HandleSensedDamage(AActor* Actor)
+{
+	UE_LOG(LogTemp, Warning, TEXT(
+		"HandleSensedDamage called for actor: %s"), *Actor->GetName());
+	EEnemyStatesRH CurrentState = GetCurrentState();
+	if (CurrentState == EEnemyStatesRH::IdleState)
+	{
+		SetAttackingState();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT(
+			"Already in state %d, not switching to attacking"), (int32)CurrentState);
+	}
 }
 
 bool AEnemyAIControllerRH::CanSenseActor(AActor* Actor, EAISenseRH Sense) const

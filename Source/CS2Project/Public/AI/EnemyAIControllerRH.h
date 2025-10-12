@@ -45,8 +45,10 @@ protected:
 	
 	void HandleSensedSight(AActor* Actor);
 
-	bool CanSenseActor(AActor* Actor, EAISenseRH Sense) const;
+	void HandleSensedDamage(AActor* Actor);
 
+	bool CanSenseActor(AActor* Actor, EAISenseRH Sense) const;
+	
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 	
