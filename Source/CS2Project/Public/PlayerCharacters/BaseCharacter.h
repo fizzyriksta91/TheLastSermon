@@ -44,6 +44,14 @@ protected:
 
 	bool bHasMovedBefore { false };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	float DeathDelay { 5.f };
+
+	FTimerHandle DeathTimerHandle;
+
+	UFUNCTION()
+	void DestroyCharacter();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -56,5 +64,11 @@ public:
 	virtual float TakeDamage(
 		float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(BlueprintAssignable, Category="Combat")
+	FOnCharacterDeath OnCharacterDeath;
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	virtual void OnDeath();
 	
 };

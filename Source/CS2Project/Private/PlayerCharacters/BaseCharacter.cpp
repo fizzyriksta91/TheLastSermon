@@ -3,6 +3,9 @@
 
 #include "PlayerCharacters/BaseCharacter.h"
 
+#include "AudioMixerBlueprintLibrary.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AISense_Damage.h"
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
@@ -54,6 +57,11 @@ void ABaseCharacter::FaceMovementDirection()
 	}
 }
 
+void ABaseCharacter::DestroyCharacter()
+{
+	Destroy();
+}
+
 // Called every frame
 void ABaseCharacter::Tick(float DeltaTime)
 {
@@ -93,8 +101,50 @@ float ABaseCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	UAISense_Damage::ReportDamageEvent(
 		GetWorld(), this, DamageCauser, ActualDamage,
 		GetActorLocation(),GetActorLocation());
-
+	
+	if (StatsComp && StatsComp->Stats[EStatsRH::Health] <= 0.0f)
+	{
+		OnDeath();
+	}
+	
 	return ActualDamage;
+}
+
+void ABaseCharacter::OnDeath()
+{
+	OnCharacterDeath.Broadcast(this);
+
+	// If this character is player-controlled, enable ragdoll physics and disable movement
+	if (GetController() && GetController()->IsPlayerController())
+	{
+		// Enable ragdoll physics
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		
+		GetMesh()->SetSimulatePhysics(true);
+		
+		// Disable character movement and collision
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		
+		DisableInput(nullptr);
+		
+		GetCharacterMovement()->DisableMovement();
+
+		// optional to add Revive or respawn logic.
+		UE_LOG(LogTemp, Warning, TEXT("Player character died, Waiting For Revive"));
+	}
+	// If this character is AI-controlled, enable ragdoll physics and set a timer to destroy the character
+	else
+	{
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		
+		GetMesh()->SetSimulatePhysics(true);
+		
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		
+		// Set a timer to destroy the character after DeathDelay seconds
+		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
+			&ABaseCharacter::DestroyCharacter, DeathDelay, false);
+	}
 }
 
 
