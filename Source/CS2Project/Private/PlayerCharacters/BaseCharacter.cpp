@@ -151,6 +151,17 @@ bool ABaseCharacter::IsDead() const
 	return StatsComp && StatsComp->Stats[EStatsRH::Health] <= 0.0f;
 }
 
+float ABaseCharacter::GetHealthPercent() const
+{
+	if (StatsComp)
+	{
+		float CurrentHealth = StatsComp->Stats[EStatsRH::Health];
+		float MaxHealth = StatsComp->Stats[EStatsRH::MaxHealth];
+		return (MaxHealth > 0.0f) ? CurrentHealth / MaxHealth : 0.0f;
+	}
+	return 0.0f;
+}
+
 
 
 

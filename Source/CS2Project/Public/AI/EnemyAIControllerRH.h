@@ -43,8 +43,6 @@ protected:
 
 	EEnemyStatesRH GetCurrentState() const;
 
-	
-
 	void SetAttackingState();
 	
 	void HandleSensedSight(AActor* Actor);

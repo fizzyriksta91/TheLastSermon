@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/WidgetComponent.h"
 #include "PlayerCharacters/BaseCharacter.h"
 #include "PlayerCharacters/Interfaces/EnemyRH.h"
 #include "EnemyBaseCharacter.generated.h"
@@ -23,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void PerformMeleeAttack();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	UWidgetComponent* HealthBarWidget;
 
 protected:
 	virtual void BeginPlay() override;
