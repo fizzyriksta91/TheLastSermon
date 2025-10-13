@@ -29,5 +29,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	UAnimMontage* MeleeAttackMontage;
+
+	virtual void OnDeath() override;
 	
 };

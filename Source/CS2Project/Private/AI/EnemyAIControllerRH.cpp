@@ -83,6 +83,15 @@ void AEnemyAIControllerRH::SetIdleState()
 		TEXT("CurrentState"), EEnemyStatesRH::IdleState);
 }
 
+void AEnemyAIControllerRH::SetDeadState()
+{
+	if (!BlackboardComp)
+		return;
+	
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"), EEnemyStatesRH::DeadState);
+}
+
 void AEnemyAIControllerRH::SetAttackingState()
 {
 	if (!BlackboardComp)
@@ -152,7 +161,7 @@ void AEnemyAIControllerRH::HandleSensedSight(AActor* Actor)
 {
 	UE_LOG(LogTemp, Warning, TEXT(
 		"HandleSensedSight called for actor: %s"), *Actor->GetName());
-
+	
 	EEnemyStatesRH CurrentState = GetCurrentState();
 	if (CurrentState == EEnemyStatesRH::IdleState)
 	{

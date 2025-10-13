@@ -3,6 +3,8 @@
 
 #include "AI/EnemyBaseCharacter.h"
 
+#include "AI/EnemyAIControllerRH.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 
@@ -15,6 +17,19 @@ void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AEnemyBaseCharacter::OnDeath()
+{
+	Super::OnDeath();
+
+	AEnemyAIControllerRH* EnemyController = Cast<AEnemyAIControllerRH>(GetController());
+	if (EnemyController)
+	{
+		EnemyController->GetBlackboardComponent()->SetValueAsBool(TEXT("IsDead"),true);
+		EnemyController->UnPossess();
+		EnemyController->SetDeadState();
+	}
 }
 
 float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
