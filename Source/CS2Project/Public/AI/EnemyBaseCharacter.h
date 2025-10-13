@@ -21,7 +21,13 @@ public:
 
 	virtual float SetMovementSpeed(EMovementSpeedRH SpeedType) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void PerformMeleeAttack();
+
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	UAnimMontage* MeleeAttackMontage;
 	
 };

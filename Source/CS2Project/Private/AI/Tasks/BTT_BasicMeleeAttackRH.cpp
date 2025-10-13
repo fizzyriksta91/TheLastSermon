@@ -3,27 +3,19 @@
 
 #include "AI/Tasks/BTT_BasicMeleeAttackRH.h"
 #include "AI/EnemyAIControllerRH.h"
-#include "GameFramework/Character.h"
-#include "PlayerCharacters/Components/TraceComponentRH.h"
+#include "AI/EnemyBaseCharacter.h"
+
 
 EBTNodeResult::Type UBTT_BasicMeleeAttackRH::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	ACharacter* CharacterRef{ OwnerComp.GetAIOwner()->GetPawn<ACharacter>() };
+	AEnemyBaseCharacter* EnemyCharacter = Cast<AEnemyBaseCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 
-	CurrentDamageType = EDamageTypesRH::LightAttack;
-
-	if (CharacterRef)
+	if (!IsValid(EnemyCharacter))
 	{
-		auto TraceComp = CharacterRef->FindComponentByClass<UTraceComponentRH>();
-		if (TraceComp)
-		{
-			TraceComp->SetCurrentDamageType(CurrentDamageType);
-			TraceComp->HandleResetAttack();
-		}
+		return EBTNodeResult::Failed;
 	}
 
-	if (!IsValid(CharacterRef)) { return EBTNodeResult::Failed; }
-	CharacterRef->PlayAnimMontage(BasicAttackMontage);
+	EnemyCharacter->PerformMeleeAttack();
 
 	return EBTNodeResult::Succeeded;
 }

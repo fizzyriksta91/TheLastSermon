@@ -70,5 +70,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	virtual void OnDeath();
+
+	virtual bool IsDead() const override;
 	
 };

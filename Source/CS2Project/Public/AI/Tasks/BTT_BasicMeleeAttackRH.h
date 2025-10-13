@@ -15,9 +15,6 @@ class CS2PROJECT_API UBTT_BasicMeleeAttackRH : public UBTTaskNode
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Animations")
-	UAnimMontage* BasicAttackMontage;
-
 	UPROPERTY()
 	TEnumAsByte<EDamageTypesRH> CurrentDamageType { EDamageTypesRH::None };
 

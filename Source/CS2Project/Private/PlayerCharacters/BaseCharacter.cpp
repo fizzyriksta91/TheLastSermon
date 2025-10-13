@@ -3,7 +3,6 @@
 
 #include "PlayerCharacters/BaseCharacter.h"
 
-#include "AudioMixerBlueprintLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AISense_Damage.h"
@@ -145,6 +144,11 @@ void ABaseCharacter::OnDeath()
 		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
 			&ABaseCharacter::DestroyCharacter, DeathDelay, false);
 	}
+}
+
+bool ABaseCharacter::IsDead() const
+{
+	return StatsComp && StatsComp->Stats[EStatsRH::Health] <= 0.0f;
 }
 
 

@@ -28,4 +28,6 @@ public:
 	virtual float GetAnimDuration() { return  0.0f; }
 
 	virtual float GetMeleeRange() { return 0.0f; }
+
+	virtual bool IsDead() const { return false; }
 };

@@ -4,6 +4,7 @@
 #include "AI/EnemyBaseCharacter.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PlayerCharacters/Components/TraceComponentRH.h"
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
@@ -36,4 +37,23 @@ float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
 	}
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 	return Speed;
+}
+
+void AEnemyBaseCharacter::PerformMeleeAttack()
+{
+	if (!MeleeAttackMontage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No BasicAttackMontage set for enemy"));
+		return;
+	}
+
+	// Set damage type
+	if (TraceComp)
+	{
+		TraceComp->SetCurrentDamageType(EDamageTypesRH::LightAttack);
+		TraceComp->HandleResetAttack();
+	}
+
+	// Play attack animation
+	PlayAnimMontage(MeleeAttackMontage);
 }

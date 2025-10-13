@@ -100,30 +100,43 @@ void AEnemyAIControllerRH::SetAttackingState()
 		
 	if (PlayerPawn0)
 	{
-		float Distance = FVector::Dist(
-			EnemyPawn->GetActorLocation(), PlayerPawn0->GetActorLocation());
-		if (Distance < ClosestDistance)
+		ICombatRH* CombatInterface = Cast<ICombatRH>(PlayerPawn0);
+		if (CombatInterface && !CombatInterface->IsDead())
 		{
-			ClosestDistance = Distance;
-			ClosestPawn = PlayerPawn0;
+			float Distance = FVector::Dist(
+				EnemyPawn->GetActorLocation(), PlayerPawn0->GetActorLocation());
+			if (Distance < ClosestDistance)
+			{
+				ClosestDistance = Distance;
+				ClosestPawn = PlayerPawn0;
+			}
 		}
+		
 	}
 	if (PlayerPawn1)
 	{
-		float Distance = FVector::Dist(
-			EnemyPawn->GetActorLocation(), PlayerPawn1->GetActorLocation());
-		if (Distance < ClosestDistance)
+		ICombatRH* CombatInterface = Cast<ICombatRH>(PlayerPawn1);
+		if (CombatInterface && !CombatInterface->IsDead())
 		{
-			ClosestDistance = Distance;
-			ClosestPawn = PlayerPawn1;
+			float Distance = FVector::Dist(
+				EnemyPawn->GetActorLocation(), PlayerPawn1->GetActorLocation());
+			if (Distance < ClosestDistance)
+			{
+				ClosestDistance = Distance;
+				ClosestPawn = PlayerPawn1;
+			}
 		}
+		
 	}
 	if (ClosestPawn)
 	{
 		BlackboardComp->SetValueAsObject(TEXT("AttackTarget"), ClosestPawn);
 		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), EEnemyStatesRH::AttackingState);
 	}
-	
+	else
+	{
+		SetIdleState();
+	}
 }
 
 EEnemyStatesRH AEnemyAIControllerRH::GetCurrentState() const
