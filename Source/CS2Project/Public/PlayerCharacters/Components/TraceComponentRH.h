@@ -39,6 +39,8 @@ public:
 	UPROPERTY()
 	TEnumAsByte<EDamageTypesRH> CurrentDamageType;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Trace")
+	TEnumAsByte<ECollisionChannel> TraceChannel { ECC_GameTraceChannel1 };
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
