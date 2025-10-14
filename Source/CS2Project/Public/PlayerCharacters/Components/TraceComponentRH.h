@@ -33,8 +33,8 @@ public:
 	// Sets default values for this component's properties
 	UTraceComponentRH();
 
-	UPROPERTY(VisibleAnywhere)
-	bool bIsAttacking{ true };
+	UPROPERTY(EditAnywhere)
+	bool bIsAttacking{ false };
 
 	UPROPERTY()
 	TEnumAsByte<EDamageTypesRH> CurrentDamageType;

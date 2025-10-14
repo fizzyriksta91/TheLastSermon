@@ -19,7 +19,5 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UMeleeCombatComponentRH* MeleeCombatComp;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class ULockOnComponentRH* LockonComp;
+	
 };
