@@ -72,5 +72,10 @@ public:
 	virtual void OnDeath();
 
 	virtual bool IsDead() const override;
+
+	UFUNCTION(BlueprintPure, Category = "Health")
+	float GetHealthPercent() const;
+
+
 	
 };

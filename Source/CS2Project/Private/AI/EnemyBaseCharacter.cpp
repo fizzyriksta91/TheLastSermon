@@ -3,18 +3,39 @@
 
 #include "AI/EnemyBaseCharacter.h"
 
+#include "AI/EnemyAIControllerRH.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
-	
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
+	HealthBarWidget->SetupAttachment(RootComponent);
+	HealthBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	HealthBarWidget->SetDrawSize(FVector2D(200.0f, 10.0f));
+	HealthBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 120.0f));
 }
+
 
 void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AEnemyBaseCharacter::OnDeath()
+{
+	Super::OnDeath();
+
+	AEnemyAIControllerRH* EnemyController = Cast<AEnemyAIControllerRH>(GetController());
+	if (EnemyController)
+	{
+		EnemyController->GetBlackboardComponent()->SetValueAsBool(TEXT("IsDead"),true);
+		EnemyController->UnPossess();
+		EnemyController->SetDeadState();
+	}
 }
 
 float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)

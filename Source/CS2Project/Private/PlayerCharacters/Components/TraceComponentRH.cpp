@@ -61,7 +61,7 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	
 		bool bHasFoundTargets{ GetWorld()->SweepMultiByChannel(
 			OutResults, StartSocketLocation, EndSocketLocation, ShapeRotation,
-			ECollisionChannel::ECC_GameTraceChannel1, Box, IgnoreParams) };
+			TraceChannel, Box, IgnoreParams) };
 
 		for (FHitResult Hit : OutResults)
 		{

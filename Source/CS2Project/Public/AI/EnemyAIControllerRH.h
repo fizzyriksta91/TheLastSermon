@@ -31,15 +31,17 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	UAIPerceptionComponent* AIPerceptionComponent;
-
+	
+	void SetDeadState();
+	
+	void SetIdleState();
+	
 protected:
 	virtual void BeginPlay() override;
 	
 	void InitializeBlackboard();
 
 	EEnemyStatesRH GetCurrentState() const;
-
-	void SetIdleState();
 
 	void SetAttackingState();
 	
