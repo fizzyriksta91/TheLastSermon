@@ -3,6 +3,7 @@
 
 #include "PlayerCharacters/MeleePlayerCharacterRH.h"
 
+#include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 
 AMeleePlayerCharacterRH::AMeleePlayerCharacterRH()
@@ -11,4 +12,5 @@ AMeleePlayerCharacterRH::AMeleePlayerCharacterRH()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeleeCombatComp = CreateDefaultSubobject<UMeleeCombatComponentRH>(TEXT("Melee Combat Component"));
+	LockonComp = CreateDefaultSubobject<ULockOnComponentRH>(TEXT("Lockon Component"));
 }

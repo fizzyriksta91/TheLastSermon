@@ -24,4 +24,10 @@ class CS2PROJECT_API IEnemyRH
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual float SetMovementSpeed(EMovementSpeedRH SpeedType) = 0;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSelect();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDeselect();
 };
