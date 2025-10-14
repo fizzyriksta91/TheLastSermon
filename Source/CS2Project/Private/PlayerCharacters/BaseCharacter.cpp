@@ -78,6 +78,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	
 }
 
+// Returns the damage value based on the character's strength and the damage type multiplier
 float ABaseCharacter::GetDamage(EDamageTypesRH DamageType)
 {
 	float Strength = StatsComp->Stats[EStatsRH::Strength];
@@ -87,7 +88,6 @@ float ABaseCharacter::GetDamage(EDamageTypesRH DamageType)
 	{
 		Multiplier = DamageValues[DamageType];
 	}
-
 	return Strength * Multiplier;
 }
 

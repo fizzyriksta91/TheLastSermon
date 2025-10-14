@@ -34,7 +34,7 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!bIsAttacking) { return; }
+	if (!bIsAttacking || !SkeletalComp) { return; }
 
 	TArray<FHitResult> AllResults;
 
