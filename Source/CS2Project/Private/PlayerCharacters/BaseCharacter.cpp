@@ -18,6 +18,7 @@ ABaseCharacter::ABaseCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Create and attach components
 	StatsComp = CreateDefaultSubobject<UStatsComponentRH>(TEXT("Stats Component"));
 	TraceComp = CreateDefaultSubobject<UTraceComponentRH>(TEXT("Trace Component"));
 	DodgeComp = CreateDefaultSubobject<UDodgeComponentRH>(TEXT("Dodge Component"));
@@ -56,6 +57,7 @@ void ABaseCharacter::FaceMovementDirection()
 	}
 }
 
+// Function to handle character destruction
 void ABaseCharacter::DestroyCharacter()
 {
 	Destroy();
@@ -91,16 +93,19 @@ float ABaseCharacter::GetDamage(EDamageTypesRH DamageType)
 	return Strength * Multiplier;
 }
 
+// Handle taking damage and report to AI perception system
 float ABaseCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(
 		DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	// Report damage to AI perception system
 	UAISense_Damage::ReportDamageEvent(
 		GetWorld(), this, DamageCauser, ActualDamage,
 		GetActorLocation(),GetActorLocation());
-	
+
+	// checks of StatsComp is valid and health is 0 or below, then calls OnDeath
 	if (StatsComp && StatsComp->Stats[EStatsRH::Health] <= 0.0f)
 	{
 		OnDeath();
@@ -109,6 +114,7 @@ float ABaseCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	return ActualDamage;
 }
 
+// Handle character death
 void ABaseCharacter::OnDeath()
 {
 	OnCharacterDeath.Broadcast(this);
@@ -118,14 +124,11 @@ void ABaseCharacter::OnDeath()
 	{
 		// Enable ragdoll physics
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		
 		GetMesh()->SetSimulatePhysics(true);
 		
 		// Disable character movement and collision
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		
 		DisableInput(nullptr);
-		
 		GetCharacterMovement()->DisableMovement();
 
 		// optional to add Revive or respawn logic.
@@ -135,9 +138,7 @@ void ABaseCharacter::OnDeath()
 	else
 	{
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		
 		GetMesh()->SetSimulatePhysics(true);
-		
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		
 		// Set a timer to destroy the character after DeathDelay seconds
@@ -145,12 +146,13 @@ void ABaseCharacter::OnDeath()
 			&ABaseCharacter::DestroyCharacter, DeathDelay, false);
 	}
 }
-
+// Check if the character is dead
 bool ABaseCharacter::IsDead() const
 {
 	return StatsComp && StatsComp->Stats[EStatsRH::Health] <= 0.0f;
 }
 
+// Get the character's health as a percentage of max health for health bar UI, needs to be fixed
 float ABaseCharacter::GetHealthPercent() const
 {
 	if (StatsComp)

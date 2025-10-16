@@ -33,41 +33,51 @@ void UTraceComponentRH::BeginPlay()
 void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	
 	if (!bIsAttacking || !SkeletalComp) { return; }
-
+	
 	TArray<FHitResult> AllResults;
 
+	// Perform Trace for each Socket Pair
 	for (const FTraceSocketsRH Socket: Sockets)
 	{
+		// Get Socket Locations and Rotation
 		FVector StartSocketLocation{ SkeletalComp->GetSocketLocation(Socket.Start) };
 		FVector EndSocketLocation{ SkeletalComp->GetSocketLocation(Socket.End) };
 		FQuat ShapeRotation { SkeletalComp->GetSocketQuaternion(Socket.Rotation) };
-
+		
 		TArray<FHitResult> OutResults;
+
+		// Calculate the distance between the two sockets
 		double WeaponDistance{ 
 			FVector::Distance(StartSocketLocation, EndSocketLocation) };
-		
+
+		// Define the box half extent
 		FVector BoxHalfExtent{ 
 			BoxCollisonLength, BoxCollisonLength, WeaponDistance };
 		
 		BoxHalfExtent /= 2;
 		
+		// Perform the box trace
 		FCollisionShape Box{ 
 			FCollisionShape::MakeBox(BoxHalfExtent) };
 		
+		// Set up query parameters to ignore the owner
 		FCollisionQueryParams IgnoreParams{ 
 			FName { TEXT("Ignore Params") }, false, GetOwner() };
 	
+		// perform sweep multi by channel to get all hits
 		bool bHasFoundTargets{ GetWorld()->SweepMultiByChannel(
 			OutResults, StartSocketLocation, EndSocketLocation, ShapeRotation,
 			TraceChannel, Box, IgnoreParams) };
-
+		
 		for (FHitResult Hit : OutResults)
 		{
+			// Add each hit result to the AllResults array
 			AllResults.Add(Hit);
 		}
 
+		// Debug Box to visualize the trace
 		if (bDebugMode)
 		{
 			FVector CenterPoint{
@@ -79,19 +89,22 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				ShapeRotation.Rotator(), 1.0f, 2.0f);
 		}
 	}
-
+	// If no hits, return
 	if (AllResults.Num() == 0) { return; }
 
+	// Get Damage from Combat Interface
 	float CharacterDamage{ 0.0f };
-
 	ICombatRH* CombatInterface{ Cast<ICombatRH>(GetOwner()) };
+
+	// If the cast is successful, get the damage value
 	if (CombatInterface)
 	{
 		CharacterDamage = CombatInterface->GetDamage(CurrentDamageType);
 	}
-
+	
 	FDamageEvent TargetAttackEvent;
 
+	// Apply damage to each hit actor, ignoring duplicates and already hit targets
 	for (const FHitResult& Hit: AllResults)
 	{
 		AActor* TargetActor { Hit.GetActor() };
@@ -105,11 +118,13 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	}
 }
 
+// Reset the list of targets to ignore
 void UTraceComponentRH::HandleResetAttack()
 {
 	TargetsToIgnore.Empty();
 }
 
+// Set the current damage type
 void UTraceComponentRH::SetCurrentDamageType(EDamageTypesRH InType)
 {
 	CurrentDamageType = InType;

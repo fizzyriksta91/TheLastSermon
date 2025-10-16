@@ -34,6 +34,7 @@ void UStatsComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
+// Reduce Health by Amount and clamp to 0 and MaxHealth
 void UStatsComponentRH::ReduceHealth(float Amount)
 {
 	if (Stats[EStatsRH::Health] <= 0.0f) { return; }

@@ -34,12 +34,14 @@ void UMeleeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+// Light Combo Attack
 void UMeleeCombatComponentRH::PerformLightComboAttack()
 {
 	if (!bCanAttack) { return; }
 
 	CurrentDamageType = EDamageTypesRH::LightAttack;
 
+	// Set Damage Type in Trace Component
 	if (CharacterRef)
 	{
 		auto TraceComp = CharacterRef->FindComponentByClass<UTraceComponentRH>();
@@ -49,13 +51,11 @@ void UMeleeCombatComponentRH::PerformLightComboAttack()
 			TraceComp->HandleResetAttack();
 		}
 	}
-	
+
+	// Play Combo Montage
 	bCanAttack = false;
-	
 	CharacterRef->PlayAnimMontage(LightComboMontages[ComboCounter]);
-	
 	ComboCounter++;
-	
 	int MaxCombo{ LightComboMontages.Num() };
 	
 	ComboCounter = UKismetMathLibrary::Wrap(
@@ -78,15 +78,19 @@ void UMeleeCombatComponentRH::ResetCombatCounter()
 	ComboCounter = 0;
 }
 
+// perform Heavy Attack
 void UMeleeCombatComponentRH::PerformHeavyAttack()
 {
+	// Check Cooldown
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 	if (CurrentTime - LastHeavyAttackTime < HeavyAttackCooldown) { return; }
 
 	if (!bCanAttack) { return; }
 
+	// Set Damage Type in Trace Component
 	CurrentDamageType = EDamageTypesRH::HeavyAttack;
 
+	// Set Damage Type in Trace Component
 	if (CharacterRef)
 	{
 		auto TraceComp = CharacterRef->FindComponentByClass<UTraceComponentRH>();
@@ -96,11 +100,10 @@ void UMeleeCombatComponentRH::PerformHeavyAttack()
 			TraceComp->HandleResetAttack();
 		}
 	}
-	
-	bCanAttack = false;
 
+	// Play Heavy Attack Montage
+	bCanAttack = false;
 	LastHeavyAttackTime = CurrentTime;
-	
 	CharacterRef->PlayAnimMontage(HeavyAttackMontage);
 }
 

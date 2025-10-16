@@ -9,17 +9,24 @@
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
-
+// Adds a local player to the game
 void AMultiplayerGameMode::AddLocalPlayer()
 {
+	// Ensure the engine and world are valid
 	if (GEngine && GetWorld())
 	{
+		// Get the game instance
 		UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+
+		// Ensure the game instance is valid
 		if (GameInstance)
 		{
-
 			FString Error;
+
+			// Create a new local player
 			ULocalPlayer* NewPlayer = GameInstance->CreateLocalPlayer(-1, Error, true);
+
+			// Check if the player was created successfully
 			if (NewPlayer)
 			{
 				UE_LOG(LogTemp, Display, TEXT("Local player added"));
@@ -28,6 +35,7 @@ void AMultiplayerGameMode::AddLocalPlayer()
 				TArray<APlayerController*> PlayerControllers;
 				for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 				{
+					// Add each player controller to the array
 					PlayerControllers.Add(Iterator->Get());
 				}
 			}

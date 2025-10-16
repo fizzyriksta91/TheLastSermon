@@ -11,6 +11,7 @@
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
+	// set the health bar widget
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 	HealthBarWidget->SetupAttachment(RootComponent);
 	HealthBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
@@ -25,19 +26,25 @@ void AEnemyBaseCharacter::BeginPlay()
 	
 }
 
+// Handle death logic specific to the enemy character
 void AEnemyBaseCharacter::OnDeath()
 {
 	Super::OnDeath();
 
+	// Notify the AI controller of death
 	AEnemyAIControllerRH* EnemyController = Cast<AEnemyAIControllerRH>(GetController());
+	
+	// Ensure the controller is valid before accessing its blackboard
 	if (EnemyController)
 	{
+		// Set the "IsDead" key in the blackboard to true, unpossess the character and change state to Dead
 		EnemyController->GetBlackboardComponent()->SetValueAsBool(TEXT("IsDead"),true);
 		EnemyController->UnPossess();
 		EnemyController->SetDeadState();
 	}
 }
 
+// Set the enemy's movement speed based on the specified speed type
 float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
 {
 	float Speed = 0.0f;
@@ -60,6 +67,7 @@ float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
 	return Speed;
 }
 
+// Perform a melee attack by playing the attack animation and setting the damage type
 void AEnemyBaseCharacter::PerformMeleeAttack()
 {
 	if (!MeleeAttackMontage)
