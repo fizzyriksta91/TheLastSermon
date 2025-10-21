@@ -2,6 +2,8 @@
 
 
 #include "PlayerCharacters/Components/RangeCombatComponentRH.h"
+#include "GameFramework/Character.h"
+
 
 // Sets default values for this component's properties
 URangeCombatComponentRH::URangeCombatComponentRH()
@@ -19,7 +21,7 @@ void URangeCombatComponentRH::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	CharacterRef = GetOwner<ACharacter>();
 	
 }
 
@@ -30,5 +32,20 @@ void URangeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void URangeCombatComponentRH::PerformPrimaryRangedAttack()
+{
+	if (!ProjectileClass || !CharacterRef) { return; }
+
+	FVector SpawnLocation = CharacterRef->GetActorLocation() +
+		CharacterRef->GetActorForwardVector() * 100.0f;
+	FRotator SpawnRotation = CharacterRef->GetActorRotation();
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = GetOwner();
+	SpawnParameters.Instigator = CharacterRef->GetInstigator();
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
 }
 
