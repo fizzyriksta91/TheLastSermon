@@ -3,6 +3,7 @@
 
 #include "PlayerCharacters/RangePlayerCharacterRH.h"
 
+#include "PlayerCharacters/Components/LanternDamageComponentRH.h"
 #include "PlayerCharacters/Components/RangeCombatComponentRH.h"
 
 ARangePlayerCharacterRH::ARangePlayerCharacterRH()
@@ -11,4 +12,5 @@ ARangePlayerCharacterRH::ARangePlayerCharacterRH()
 	PrimaryActorTick.bCanEverTick = true;
 
 	RangeCombatComp = CreateDefaultSubobject<URangeCombatComponentRH>(TEXT("Range Combat Component"));
+	LanternDamageComp = CreateDefaultSubobject<ULanternDamageComponentRH>(TEXT("Lantern Damage Component"));
 }

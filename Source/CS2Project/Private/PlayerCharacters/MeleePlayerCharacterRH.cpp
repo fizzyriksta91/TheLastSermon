@@ -3,6 +3,7 @@
 
 #include "PlayerCharacters/MeleePlayerCharacterRH.h"
 
+#include "PlayerCharacters/Components/LanternDamageComponentRH.h"
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 
 AMeleePlayerCharacterRH::AMeleePlayerCharacterRH()
@@ -11,4 +12,5 @@ AMeleePlayerCharacterRH::AMeleePlayerCharacterRH()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeleeCombatComp = CreateDefaultSubobject<UMeleeCombatComponentRH>(TEXT("Melee Combat Component"));
+	LanternDamageComp = CreateDefaultSubobject<ULanternDamageComponentRH>(TEXT("Lantern Damage Component"));
 }

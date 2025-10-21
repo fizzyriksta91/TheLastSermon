@@ -19,5 +19,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UMeleeCombatComponentRH* MeleeCombatComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
+	class ULanternDamageComponentRH* LanternDamageComp;
 	
 };
