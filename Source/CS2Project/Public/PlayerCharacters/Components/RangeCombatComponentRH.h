@@ -34,4 +34,10 @@ public:
 private:
 	UPROPERTY()
 	ACharacter* CharacterRef;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	float LastShotTime { -1.0f };
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float ShotCooldown { 0.5f };
 };

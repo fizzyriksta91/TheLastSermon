@@ -38,6 +38,13 @@ void URangeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType
 
 void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 {
+	// Check Cooldown
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+	if (CurrentTime - LastShotTime < ShotCooldown)
+	{
+		return; // Still in cooldown
+	}
+
 	if (!ProjectileClass || !CharacterRef) { return; }
 
 	FVector SpawnLocation = CharacterRef->GetActorLocation() +
@@ -61,5 +68,6 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::GunShot);
 		}
 	}
+	LastShotTime = CurrentTime;
 }
 

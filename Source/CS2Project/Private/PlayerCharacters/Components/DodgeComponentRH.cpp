@@ -6,6 +6,7 @@
 
 #include "GameFramework/Character.h"
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
+#include "PlayerCharacters/Components/RangeCombatComponentRH.h"
 
 // Sets default values for this component's properties
 UDodgeComponentRH::UDodgeComponentRH()
@@ -39,51 +40,60 @@ void UDodgeComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 // Function to initiate the dodge action
 void UDodgeComponentRH::Dodge()
 {
-	// Ensure the owner is a character and can dodge
-	UMeleeCombatComponentRH* MeleeCombatComp = GetOwner()->FindComponentByClass<UMeleeCombatComponentRH>();
-
-	// Check if the character can attack (not in the middle of an attack)
-	if (MeleeCombatComp)
-	{
-		bool bCanAttack = MeleeCombatComp->bCanAttack;
-	}
-	
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 
-	// Check if the character is valid, not already dodging, and can attack
-	if (Character && !bIsDodging && MeleeCombatComp && MeleeCombatComp->bCanAttack)
+	// If no character or already dodging, return
+	if (!Character || bIsDodging) { return; }
+
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+    
+	// Check if the dodge is off cooldown
+	if (CurrentTime - LastDodgeTime < DodgeCooldown)
 	{
-		float CurrentTime = GetWorld()->GetTimeSeconds();
-		
-		// Check if the dodge is off cooldown
-		if (CurrentTime - LastDodgeTime < DodgeCooldown)
-		{
-			return;
-		}
-
-		// Play the dodge animation montage if assigned
-		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-		if (AnimInstance == nullptr)
-			return;
-
-		// Start the dodge action and set the timer to end it
-		float DodgeDuration = 0.5f; 
-		AnimInstance->Montage_Play(DodgeMontage);
-		bIsDodging = true;
-        MeleeCombatComp->bCanAttack = false;
-		LastDodgeTime = CurrentTime;
-		
-		// You can add additional logic here, such as applying invincibility frames or movement adjustments
-
-		GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle,
-			this, &UDodgeComponentRH::OnDodgeFinished, DodgeDuration, false);
+		return;
 	}
+
+	// Check melee combat component
+	UMeleeCombatComponentRH* MeleeCombatComp = GetOwner()->FindComponentByClass<UMeleeCombatComponentRH>();
+    
+	// Check ranged combat component
+	URangeCombatComponentRH* RangeCombatComp = GetOwner()->FindComponentByClass<URangeCombatComponentRH>();
+
+	// Can only dodge if not attacking
+	bool bCanDodge = true;
+	if (MeleeCombatComp)
+	{
+		bCanDodge = MeleeCombatComp->bCanAttack;
+	}
+
+	if (!bCanDodge) { return; }
+
+	// Play dodge animation
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	if (!AnimInstance || !DodgeMontage) { return; }
+
+	// Start dodge and set timer
+	float DodgeDuration = 0.5f;
+	AnimInstance->Montage_Play(DodgeMontage);
+	bIsDodging = true;
+	LastDodgeTime = CurrentTime;
+
+	// Disable combat during dodge
+	if (MeleeCombatComp)
+	{
+		MeleeCombatComp->bCanAttack = false;
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle,
+		this, &UDodgeComponentRH::OnDodgeFinished, DodgeDuration, false);
 }
 
 // Function called when the dodge action is finished
 void UDodgeComponentRH::OnDodgeFinished()
 {
 	bIsDodging = false;
+    
+	// Re-enable combat
 	UMeleeCombatComponentRH* MeleeCombatComp = GetOwner()->FindComponentByClass<UMeleeCombatComponentRH>();
 	if (MeleeCombatComp)
 	{
