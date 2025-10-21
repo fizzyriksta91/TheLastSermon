@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CancelChargeShot();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Combat")
+	bool IsCharging() const { return bIsCharging; }
+
 private:
 	UPROPERTY()
 	ACharacter* CharacterRef;

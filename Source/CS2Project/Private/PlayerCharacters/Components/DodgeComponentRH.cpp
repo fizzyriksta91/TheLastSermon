@@ -66,6 +66,11 @@ void UDodgeComponentRH::Dodge()
 		bCanDodge = MeleeCombatComp->bCanAttack;
 	}
 
+	if (RangeCombatComp && RangeCombatComp->IsCharging())
+	{
+		bCanDodge = false;
+	}
+
 	if (!bCanDodge) { return; }
 
 	// Play dodge animation
