@@ -3,6 +3,8 @@
 
 #include "PlayerCharacters/Components/RangeCombatComponentRH.h"
 #include "GameFramework/Character.h"
+#include "PlayerCharacters/ProjectileBaseRH.h"
+#include "PlayerCharacters/Interfaces/CombatRH.h"
 
 
 // Sets default values for this component's properties
@@ -46,6 +48,18 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 	SpawnParameters.Owner = GetOwner();
 	SpawnParameters.Instigator = CharacterRef->GetInstigator();
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
+	AActor* SpawnedProjectile = GetWorld()->SpawnActor<AActor>(
+		ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
+
+	if (AProjectileBaseRH* Projectile = Cast<AProjectileBaseRH>(SpawnedProjectile))
+	{
+		Projectile->DamageType = EDamageTypesRH::GunShot;
+
+		// Calculate damage using the character's GetDamage method
+		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
+		{
+			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::GunShot);
+		}
+	}
 }
 

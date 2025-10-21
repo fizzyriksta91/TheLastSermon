@@ -4,6 +4,7 @@
 #include "PlayerCharacters/ProjectileBaseRH.h"
 
 #include "Components/SphereComponent.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 
@@ -15,12 +16,14 @@ AProjectileBaseRH::AProjectileBaseRH()
 	
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(8.0f);
+	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileBaseRH::OnHit);
 	RootComponent = CollisionComp;
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	MovementComp->InitialSpeed = 2000.0f;
 	MovementComp->MaxSpeed = 2000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
+	MovementComp->ProjectileGravityScale = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -34,5 +37,28 @@ void AProjectileBaseRH::BeginPlay()
 void AProjectileBaseRH::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+
+void AProjectileBaseRH::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                              FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor && OtherActor != this && OtherActor != GetOwner())
+	{
+		// Create a custom damage event to pass damage type info
+		FDamageEvent DamageEvent;
+        
+		// Apply damage - the target's TakeDamage will use this
+		float ActualDamage = OtherActor->TakeDamage(
+			Damage, 
+			DamageEvent, 
+			GetInstigatorController(), 
+			this);
+
+		UE_LOG(LogTemp, Warning, TEXT("Projectile hit %s, Applied Damage: %f, DamageType: %d"),
+			   *OtherActor->GetName(), ActualDamage, DamageType);
+
+		Destroy();
+	}
 }
 
