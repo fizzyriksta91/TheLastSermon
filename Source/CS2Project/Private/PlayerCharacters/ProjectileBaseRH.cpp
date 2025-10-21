@@ -45,6 +45,25 @@ void AProjectileBaseRH::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 {
 	if (OtherActor && OtherActor != this && OtherActor != GetOwner())
 	{
+		// check if both owner and hit actor are player controlled
+		APawn* OwnerPawn = Cast<APawn>(GetOwner());
+		APawn* HitPawn = Cast<APawn>(OtherActor);
+
+		if (OwnerPawn && HitPawn)
+		{
+			bool bOwnerIsPlayer = OwnerPawn->IsPlayerControlled();
+			bool bHitIsPlayer = HitPawn->IsPlayerControlled();
+
+			// don't do damage to players
+			if (bOwnerIsPlayer && bHitIsPlayer)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Blocked friendly fire from %s to %s"),
+					   *GetOwner()->GetName(), *OtherActor->GetName());
+				Destroy();
+				return;
+			}
+		}
+
 		// Create a custom damage event to pass damage type info
 		FDamageEvent DamageEvent;
         
