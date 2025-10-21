@@ -31,6 +31,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PerformPrimaryRangedAttack();
 
+	UFUNCTION(BlueprintCallable)
+	void StartChargeShot();
+
+	UFUNCTION(BlueprintCallable)
+	void CancelChargeShot();
+
 private:
 	UPROPERTY()
 	ACharacter* CharacterRef;
@@ -40,4 +46,20 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float ShotCooldown { 0.5f };
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float ChargeShotDuration { 2.0f };
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float ChargeShotCooldown { 5.0f };
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	float LastChargeShotTime { -10.0f };
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	bool bIsCharging { false };
+
+	FTimerHandle ChargeShotTimerHandle;
+
+	void FireChargeShot();
 };

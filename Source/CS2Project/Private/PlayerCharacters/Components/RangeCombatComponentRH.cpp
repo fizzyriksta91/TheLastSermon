@@ -3,6 +3,7 @@
 
 #include "PlayerCharacters/Components/RangeCombatComponentRH.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacters/ProjectileBaseRH.h"
 #include "PlayerCharacters/Interfaces/CombatRH.h"
 
@@ -69,5 +70,87 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 		}
 	}
 	LastShotTime = CurrentTime;
+}
+
+void URangeCombatComponentRH::StartChargeShot()
+{
+	// Check cooldown
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+	if (CurrentTime - LastChargeShotTime < ChargeShotCooldown)
+	{
+		return;
+	}
+
+	if (!CharacterRef || bIsCharging) { return; }
+
+	// Disable character movement
+	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+	{
+		Character->GetCharacterMovement()->DisableMovement();
+	}
+
+	bIsCharging = true;
+
+	// Start timer to fire charge shot
+	GetWorld()->GetTimerManager().SetTimer(
+		ChargeShotTimerHandle, this, &URangeCombatComponentRH::FireChargeShot,
+		ChargeShotDuration, false);
+
+	UE_LOG(LogTemp, Display, TEXT("Charging shot"));
+}
+
+void URangeCombatComponentRH::CancelChargeShot()
+{
+	if (!bIsCharging) { return; }
+
+	// Re-enable character movement
+	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+	{
+		Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+
+	// Clear Timer
+	GetWorld()->GetTimerManager().ClearTimer(ChargeShotTimerHandle);
+
+	bIsCharging = false;
+	UE_LOG(LogTemp, Display, TEXT("Charge shot cancelled"));
+}
+
+void URangeCombatComponentRH::FireChargeShot()
+{
+	if (!ProjectileClass || !CharacterRef) { return; }
+
+	FVector SpawnLocation = CharacterRef->GetActorLocation() +
+		CharacterRef->GetActorForwardVector() * 100.0f;
+	FRotator SpawnRotation = CharacterRef->GetActorRotation();
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = GetOwner();
+	SpawnParameters.Instigator = CharacterRef->GetInstigator();
+
+	AActor* SpawnedProjectile = GetWorld()->SpawnActor<AActor>(
+		ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
+
+	if (AProjectileBaseRH* Projectile = Cast<AProjectileBaseRH>(SpawnedProjectile))
+	{
+		Projectile->DamageType = EDamageTypesRH::ChargeShot;
+
+		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
+		{
+			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::ChargeShot);
+		}
+
+		Projectile->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
+	}
+
+	// Re-enable character movement
+	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+	{
+		Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+
+	bIsCharging = false;
+	LastChargeShotTime = GetWorld()->GetTimeSeconds();
+	UE_LOG(LogTemp, Display, TEXT("Charge shot fired"));
 }
 
