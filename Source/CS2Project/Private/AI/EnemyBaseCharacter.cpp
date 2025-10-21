@@ -11,12 +11,7 @@
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
-	// set the health bar widget
-	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
-	HealthBarWidget->SetupAttachment(RootComponent);
-	HealthBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
-	HealthBarWidget->SetDrawSize(FVector2D(200.0f, 10.0f));
-	HealthBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 120.0f));
+	
 }
 
 
