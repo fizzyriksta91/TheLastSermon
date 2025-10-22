@@ -18,10 +18,12 @@ public:
 
 	ARangePlayerCharacterRH();
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
 	class URangeCombatComponentRH* RangeCombatComp;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
 	class ULanternDamageComponentRH* LanternDamageComp;
-	
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
+	class ULockOnComponentRH* LockOnComp;
 };

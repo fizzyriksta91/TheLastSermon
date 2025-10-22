@@ -75,7 +75,5 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercent() const;
-
-
 	
 };

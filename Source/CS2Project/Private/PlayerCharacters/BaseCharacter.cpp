@@ -63,13 +63,6 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 	// Auto-face the movement direction
 	FaceMovementDirection();
-	// Debug velocity
-	FVector Velocity = GetVelocity();
-	if (!Velocity.IsNearlyZero())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Velocity: %s, Speed: %f"), *Velocity.ToString(), Velocity.Size());
-	}
-
 }
 
 // Called to bind functionality to input

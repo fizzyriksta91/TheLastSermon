@@ -5,6 +5,7 @@
 
 #include "GameFramework/Character.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 #include "PlayerCharacters/Interfaces/PlayerRH.h"
 
@@ -38,6 +39,13 @@ void UMeleeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType
 void UMeleeCombatComponentRH::PerformLightComboAttack()
 {
 	if (!bCanAttack) { return; }
+
+	// Find and lock onto nearest enemy when attacking
+	if (auto LockOnComp = CharacterRef->FindComponentByClass<ULockOnComponentRH>())
+	{
+		TArray<AActor*> NearbyEnemies = LockOnComp->FindEnemiesInRadius(1000.0f);
+		// Next step: Find closest enemy and set as lock-on target
+	}
 
 	CurrentDamageType = EDamageTypesRH::LightAttack;
 

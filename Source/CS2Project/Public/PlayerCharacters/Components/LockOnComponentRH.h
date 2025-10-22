@@ -16,21 +16,12 @@ class CS2PROJECT_API ULockOnComponentRH : public UActorComponent
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	TObjectPtr<ACharacter> OwnerRef;
-
-	UPROPERTY()
-	TObjectPtr<AActor> CurrentTargetActor;
-
 public:	
 	// Sets default values for this component's properties
 	ULockOnComponentRH();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnUpdatedTargetSignature OnUpdatedTargetDelegate;
-
-	UFUNCTION(BlueprintCallable)
-	void StartLockon(float Radius);
 
 protected:
 	// Called when the game starts
@@ -40,5 +31,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	UFUNCTION(BlueprintCallable, Category = "Lock On")
+	TArray<AActor*> FindEnemiesInRadius(float Radius);
+
+private:
+	UPROPERTY()
+	class ACharacter* OwnerCharacter;
+
+	UPROPERTY(EditAnywhere, Category = "Lock On")
+	float DetectionRadius { 1000.0f };
 };

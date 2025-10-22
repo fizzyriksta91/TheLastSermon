@@ -17,10 +17,12 @@ public:
 
 	AMeleePlayerCharacterRH();
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
 	class UMeleeCombatComponentRH* MeleeCombatComp;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
 	class ULanternDamageComponentRH* LanternDamageComp;
-	
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
+	class ULockOnComponentRH* LockOnComp;
 };

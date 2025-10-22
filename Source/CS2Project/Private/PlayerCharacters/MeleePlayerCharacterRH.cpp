@@ -4,6 +4,7 @@
 #include "PlayerCharacters/MeleePlayerCharacterRH.h"
 
 #include "PlayerCharacters/Components/LanternDamageComponentRH.h"
+#include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 
 AMeleePlayerCharacterRH::AMeleePlayerCharacterRH()
@@ -13,4 +14,5 @@ AMeleePlayerCharacterRH::AMeleePlayerCharacterRH()
 
 	MeleeCombatComp = CreateDefaultSubobject<UMeleeCombatComponentRH>(TEXT("Melee Combat Component"));
 	LanternDamageComp = CreateDefaultSubobject<ULanternDamageComponentRH>(TEXT("Lantern Damage Component"));
+	LockOnComp = CreateDefaultSubobject<ULockOnComponentRH>(TEXT("Lock On Component"));
 }

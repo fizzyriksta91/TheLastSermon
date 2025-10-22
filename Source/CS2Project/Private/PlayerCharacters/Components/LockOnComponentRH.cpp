@@ -2,10 +2,10 @@
 
 
 #include "PlayerCharacters/Components/LockOnComponentRH.h"
+
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "PlayerCharacters/Interfaces/EnemyRH.h"
+#include "PlayerCharacters/BaseCharacter.h"
+
 
 // Sets default values for this component's properties
 ULockOnComponentRH::ULockOnComponentRH()
@@ -19,8 +19,8 @@ ULockOnComponentRH::ULockOnComponentRH()
 void ULockOnComponentRH::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerRef = GetOwner<ACharacter>();
-	
+
+	OwnerCharacter = Cast<ACharacter>(GetOwner());
 }
 
 // Called every frame
@@ -30,45 +30,45 @@ void ULockOnComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	
 }
 
-void ULockOnComponentRH::StartLockon(float Radius)
+TArray<AActor*> ULockOnComponentRH::FindEnemiesInRadius(float Radius)
 {
-	if (!IsValid(OwnerRef)) { return; }
+	TArray<AActor*> FoundEnemies;
 
+	if (!OwnerCharacter) { return FoundEnemies; }
+
+	TArray<FHitResult> HitResults;
+	FVector StartLocation = OwnerCharacter->GetActorLocation();
+
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(Radius);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(OwnerCharacter);
+
+	bool bHit = GetWorld()->SweepMultiByChannel(
+		HitResults, StartLocation, StartLocation,
+		FQuat::Identity, ECC_Pawn, Sphere, QueryParams);
+
+	DrawDebugSphere(GetWorld(), StartLocation, Radius, 32, FColor::Green, false, 2.0f);
 	
-	TArray<FHitResult> OutResults;
-	FVector CurrentLocation{ OwnerRef->GetActorLocation() };
-	FCollisionShape Sphere{ FCollisionShape::MakeSphere(Radius)};
-	FCollisionQueryParams IgnoreParams(
-		TEXT("LockOnTrace"), false, OwnerRef);
-
-	IgnoreParams.AddIgnoredActor(OwnerRef);
-
-	bool bHasFoundTarget{ GetWorld()->SweepMultiByChannel(
-		OutResults, CurrentLocation, CurrentLocation, FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel1, Sphere, IgnoreParams) };
-
-	if (bHasFoundTarget)
+	if (bHit)
 	{
-		for (const FHitResult& Hit : OutResults)
+		for (const FHitResult& Hit : HitResults)
 		{
-			AActor* FoundActor = Hit.GetActor();
-
-			if (IsValid(FoundActor) && FoundActor->Implements<UEnemyRH>())
+			if (ABaseCharacter* Enemy = Cast<ABaseCharacter>(Hit.GetActor()))
 			{
-
-				ACharacter* CharacterRef = Cast<ACharacter>(FoundActor);
-				if (!CharacterRef || !CharacterRef->IsPlayerControlled())
+				if (!Enemy->IsDead() && Enemy->GetController()
+					&& !Enemy->GetController()->IsPlayerController())
 				{
-					CurrentTargetActor = FoundActor;
-					UE_LOG(LogTemp, Log, TEXT("LockOn: Found enemy - %s"), *CurrentTargetActor->GetName());
-					OnUpdatedTargetDelegate.Broadcast(CurrentTargetActor);
-					return;
+					FoundEnemies.Add(Enemy);
 				}
 			}
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("LockOn: Found actors but none are valid enemies"));
+
+	UE_LOG(LogTemp, Warning, TEXT(
+		"Found %d Enemies within radius %.2f"), FoundEnemies.Num(), Radius);
+	return FoundEnemies;
 }
+
 
 
 

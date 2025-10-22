@@ -4,6 +4,7 @@
 #include "PlayerCharacters/RangePlayerCharacterRH.h"
 
 #include "PlayerCharacters/Components/LanternDamageComponentRH.h"
+#include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Components/RangeCombatComponentRH.h"
 
 ARangePlayerCharacterRH::ARangePlayerCharacterRH()
@@ -13,4 +14,5 @@ ARangePlayerCharacterRH::ARangePlayerCharacterRH()
 
 	RangeCombatComp = CreateDefaultSubobject<URangeCombatComponentRH>(TEXT("Range Combat Component"));
 	LanternDamageComp = CreateDefaultSubobject<ULanternDamageComponentRH>(TEXT("Lantern Damage Component"));
+	LockOnComp = CreateDefaultSubobject<ULockOnComponentRH>(TEXT("Lock On Component"));
 }
