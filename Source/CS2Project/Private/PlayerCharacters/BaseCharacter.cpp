@@ -34,26 +34,19 @@ void ABaseCharacter::BeginPlay()
 
 void ABaseCharacter::FaceMovementDirection()
 {
-	// Get the character's velocity
 	FVector Velocity = GetVelocity();
-    
-	// Only rotate if we're actually moving
-	if (!Velocity.IsNearlyZero())
+
+	if (!Velocity.IsNearlyZero(10.0f))
 	{
-		// Zero out Z component to keep rotation on XY plane
 		Velocity.Z = 0.0f;
-		Velocity.Normalize();
-        
-		// Convert to rotation and set actor rotation (only yaw component)
-		FRotator NewRotation = Velocity.Rotation();
-		LastMovementRotation = FRotator(0.f, NewRotation.Yaw, 0.f);
-		SetActorRotation(LastMovementRotation);
-		bHasMovedBefore = true;
-	}
-	else if (bHasMovedBefore)
-	{
-		// If not moving, maintain the last known movement direction
-		SetActorRotation(LastMovementRotation);
+		FRotator TargetRotation = Velocity.Rotation();
+		FRotator NewRotation = FMath::RInterpTo(
+			GetActorRotation(),
+			TargetRotation,
+			GetWorld()->GetDeltaSeconds(),
+			20.0f
+		);
+		SetActorRotation(FRotator(0.f, NewRotation.Yaw, 0.f));
 	}
 }
 
@@ -70,6 +63,12 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 	// Auto-face the movement direction
 	FaceMovementDirection();
+	// Debug velocity
+	FVector Velocity = GetVelocity();
+	if (!Velocity.IsNearlyZero())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Velocity: %s, Speed: %f"), *Velocity.ToString(), Velocity.Size());
+	}
 
 }
 
