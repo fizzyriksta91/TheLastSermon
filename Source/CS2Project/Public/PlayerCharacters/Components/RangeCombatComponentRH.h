@@ -12,7 +12,7 @@ class CS2PROJECT_API URangeCombatComponentRH : public UActorComponent
 {
 	GENERATED_BODY()
 
-	void RotateTowardsNearestEnemy();
+	
 
 public:	
 	// Sets default values for this component's properties
@@ -67,4 +67,14 @@ private:
 	FTimerHandle ChargeShotTimerHandle;
 
 	void FireChargeShot();
+
+	void RotateTowardsNearestEnemy();
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float PrimaryFireMovementLockDuration { 0.1f };
+
+	FTimerHandle PrimaryFireMovementTimerHandle;
+
+	UFUNCTION()
+	void ReEnableMovementAfterPrimaryFire();
 };

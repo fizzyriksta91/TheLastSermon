@@ -47,7 +47,8 @@ TArray<AActor*> ULockOnComponentRH::FindEnemiesInRadius(float Radius)
 		HitResults, StartLocation, StartLocation,
 		FQuat::Identity, ECC_Pawn, Sphere, QueryParams);
 
-	DrawDebugSphere(GetWorld(), StartLocation, Radius, 32, FColor::Green, false, 2.0f);
+	// Debug sphere for enemy detection
+	// DrawDebugSphere(GetWorld(), StartLocation, Radius, 32, FColor::Green, false, 2.0f);
 	
 	if (bHit)
 	{
@@ -63,9 +64,6 @@ TArray<AActor*> ULockOnComponentRH::FindEnemiesInRadius(float Radius)
 			}
 		}
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT(
-		"Found %d Enemies within radius %.2f"), FoundEnemies.Num(), Radius);
 	return FoundEnemies;
 }
 
@@ -105,7 +103,7 @@ void ULockOnComponentRH::RotateTowardsTarget(AActor* Target, float DeltaTime)
 		FRotator TargetRotation = Direction.Rotation();
 		FRotator NewRotation = FMath::RInterpTo(
 			OwnerCharacter->GetActorRotation(),
-			TargetRotation, DeltaTime, 80.f);
+			TargetRotation, DeltaTime, 100.f);
 
 		OwnerCharacter->SetActorRotation(FRotator(0.0f, NewRotation.Yaw, 0.0f));
 	}

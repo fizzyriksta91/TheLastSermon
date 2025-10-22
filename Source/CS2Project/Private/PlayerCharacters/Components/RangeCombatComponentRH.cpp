@@ -54,6 +54,12 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 
 	if (!ProjectileClass || !CharacterRef) { return; }
 
+	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+	{
+		// Disable movement temporarily
+		Character->GetCharacterMovement()->DisableMovement();
+	}
+
 	FVector SpawnLocation = CharacterRef->GetActorLocation() +
 		CharacterRef->GetActorForwardVector() * 100.0f;
 	FRotator SpawnRotation = CharacterRef->GetActorRotation();
@@ -75,6 +81,12 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::GunShot);
 		}
 	}
+
+	GetWorld()->GetTimerManager().SetTimer(
+		PrimaryFireMovementTimerHandle, this,
+		&URangeCombatComponentRH::ReEnableMovementAfterPrimaryFire,
+		PrimaryFireMovementLockDuration, false);
+	
 	LastShotTime = CurrentTime;
 }
 
@@ -173,6 +185,17 @@ void URangeCombatComponentRH::RotateTowardsNearestEnemy()
 			{
 				LockOnComp->RotateTowardsTarget(ClosestEnemy, GetWorld()->GetDeltaSeconds());
 			}
+		}
+	}
+}
+
+void URangeCombatComponentRH::ReEnableMovementAfterPrimaryFire()
+{
+	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+	{
+		if (!bIsCharging)
+		{
+			Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		}
 	}
 }
