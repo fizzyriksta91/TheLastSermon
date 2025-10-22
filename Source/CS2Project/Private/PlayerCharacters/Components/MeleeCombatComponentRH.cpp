@@ -44,7 +44,14 @@ void UMeleeCombatComponentRH::PerformLightComboAttack()
 	if (auto LockOnComp = CharacterRef->FindComponentByClass<ULockOnComponentRH>())
 	{
 		TArray<AActor*> NearbyEnemies = LockOnComp->FindEnemiesInRadius(1000.0f);
-		// Next step: Find closest enemy and set as lock-on target
+		if (NearbyEnemies.Num() > 0)
+		{
+			AActor* ClosestEnemy = LockOnComp->FindClosestEnemy(NearbyEnemies);
+			if (ClosestEnemy)
+			{
+				LockOnComp->RotateTowardsTarget(ClosestEnemy, GetWorld()->GetDeltaSeconds());
+			}
+		}
 	}
 
 	CurrentDamageType = EDamageTypesRH::LightAttack;

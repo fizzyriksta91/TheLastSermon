@@ -69,6 +69,48 @@ TArray<AActor*> ULockOnComponentRH::FindEnemiesInRadius(float Radius)
 	return FoundEnemies;
 }
 
+AActor* ULockOnComponentRH::FindClosestEnemy(const TArray<AActor*>& Enemies)
+{
+	if (Enemies.Num() == 0 || !OwnerCharacter) { return nullptr; }
+
+	AActor* ClosestEnemy = nullptr;
+	float ClosestDistance = FLT_MAX;
+	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
+
+	for (AActor* Enemy : Enemies)
+	{
+		float Distance = FVector::Dist(OwnerLocation, Enemy->GetActorLocation());
+		if (Distance < ClosestDistance)
+		{
+			ClosestDistance = Distance;
+			ClosestEnemy = Enemy;
+		}
+	}
+
+	return ClosestEnemy;
+}
+
+void ULockOnComponentRH::RotateTowardsTarget(AActor* Target, float DeltaTime)
+{
+	if (!Target || !OwnerCharacter) { return; }
+
+	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
+	FVector TargetLocation = Target->GetActorLocation();
+
+	FVector Direction = TargetLocation - OwnerLocation;
+	Direction.Z = 0.0f;
+
+	if (!Direction.IsNearlyZero())
+	{
+		FRotator TargetRotation = Direction.Rotation();
+		FRotator NewRotation = FMath::RInterpTo(
+			OwnerCharacter->GetActorRotation(),
+			TargetRotation, DeltaTime, 80.f);
+
+		OwnerCharacter->SetActorRotation(FRotator(0.0f, NewRotation.Yaw, 0.0f));
+	}
+}
+
 
 
 

@@ -34,6 +34,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Lock On")
 	TArray<AActor*> FindEnemiesInRadius(float Radius);
 
+	UFUNCTION(BlueprintCallable, Category = "Lock On")
+	AActor* FindClosestEnemy(const TArray<AActor*>& Enemies);
+
+	UFUNCTION(BlueprintCallable, Category = "Lock On")
+	void RotateTowardsTarget(AActor* Target, float DeltaTime);
+
 private:
 	UPROPERTY()
 	class ACharacter* OwnerCharacter;
