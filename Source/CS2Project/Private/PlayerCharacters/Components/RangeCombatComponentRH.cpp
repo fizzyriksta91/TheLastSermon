@@ -5,8 +5,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacters/ProjectileBaseRH.h"
+#include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Interfaces/CombatRH.h"
-
 
 // Sets default values for this component's properties
 URangeCombatComponentRH::URangeCombatComponentRH()
@@ -34,7 +34,11 @@ void URangeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Continuously rotate towards enemy while charging
+	if (bIsCharging)
+	{
+		RotateTowardsNearestEnemy();
+	}
 }
 
 void URangeCombatComponentRH::PerformPrimaryRangedAttack()
@@ -45,6 +49,8 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 	{
 		return; // Still in cooldown
 	}
+
+	RotateTowardsNearestEnemy();
 
 	if (!ProjectileClass || !CharacterRef) { return; }
 
@@ -154,3 +160,19 @@ void URangeCombatComponentRH::FireChargeShot()
 	UE_LOG(LogTemp, Display, TEXT("Charge shot fired"));
 }
 
+void URangeCombatComponentRH::RotateTowardsNearestEnemy()
+{
+	// Find and lock onto nearest enemy when attacking
+	if (auto LockOnComp = CharacterRef->FindComponentByClass<ULockOnComponentRH>())
+	{
+		TArray<AActor*> NearbyEnemies = LockOnComp->FindEnemiesInRadius(1000.0f);
+		if (NearbyEnemies.Num() > 0)
+		{
+			AActor* ClosestEnemy = LockOnComp->FindClosestEnemy(NearbyEnemies);
+			if (ClosestEnemy)
+			{
+				LockOnComp->RotateTowardsTarget(ClosestEnemy, GetWorld()->GetDeltaSeconds());
+			}
+		}
+	}
+}

@@ -12,6 +12,8 @@ class CS2PROJECT_API URangeCombatComponentRH : public UActorComponent
 {
 	GENERATED_BODY()
 
+	void RotateTowardsNearestEnemy();
+
 public:	
 	// Sets default values for this component's properties
 	URangeCombatComponentRH();

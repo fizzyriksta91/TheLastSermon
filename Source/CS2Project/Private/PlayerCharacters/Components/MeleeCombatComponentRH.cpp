@@ -9,6 +9,8 @@
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 #include "PlayerCharacters/Interfaces/PlayerRH.h"
 
+
+
 // Sets default values for this component's properties
 UMeleeCombatComponentRH::UMeleeCombatComponentRH()
 {
@@ -40,19 +42,7 @@ void UMeleeCombatComponentRH::PerformLightComboAttack()
 {
 	if (!bCanAttack) { return; }
 
-	// Find and lock onto nearest enemy when attacking
-	if (auto LockOnComp = CharacterRef->FindComponentByClass<ULockOnComponentRH>())
-	{
-		TArray<AActor*> NearbyEnemies = LockOnComp->FindEnemiesInRadius(1000.0f);
-		if (NearbyEnemies.Num() > 0)
-		{
-			AActor* ClosestEnemy = LockOnComp->FindClosestEnemy(NearbyEnemies);
-			if (ClosestEnemy)
-			{
-				LockOnComp->RotateTowardsTarget(ClosestEnemy, GetWorld()->GetDeltaSeconds());
-			}
-		}
-	}
+	RotateTowardsNearestEnemy();
 
 	CurrentDamageType = EDamageTypesRH::LightAttack;
 
@@ -102,6 +92,8 @@ void UMeleeCombatComponentRH::PerformHeavyAttack()
 
 	if (!bCanAttack) { return; }
 
+	RotateTowardsNearestEnemy();
+
 	// Set Damage Type in Trace Component
 	CurrentDamageType = EDamageTypesRH::HeavyAttack;
 
@@ -122,5 +114,20 @@ void UMeleeCombatComponentRH::PerformHeavyAttack()
 	CharacterRef->PlayAnimMontage(HeavyAttackMontage);
 }
 
-
+void UMeleeCombatComponentRH::RotateTowardsNearestEnemy()
+{
+	// Find and lock onto nearest enemy when attacking
+	if (auto LockOnComp = CharacterRef->FindComponentByClass<ULockOnComponentRH>())
+	{
+		TArray<AActor*> NearbyEnemies = LockOnComp->FindEnemiesInRadius(1000.0f);
+		if (NearbyEnemies.Num() > 0)
+		{
+			AActor* ClosestEnemy = LockOnComp->FindClosestEnemy(NearbyEnemies);
+			if (ClosestEnemy)
+			{
+				LockOnComp->RotateTowardsTarget(ClosestEnemy, GetWorld()->GetDeltaSeconds());
+			}
+		}
+	}
+}
 

@@ -39,6 +39,8 @@ class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 	UPROPERTY()
 	TEnumAsByte<EDamageTypesRH> CurrentDamageType { EDamageTypesRH::None };
 
+	void RotateTowardsNearestEnemy();
+
 public:	
 	// Sets default values for this component's properties
 	UMeleeCombatComponentRH();
