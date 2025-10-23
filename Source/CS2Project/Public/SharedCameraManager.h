@@ -6,9 +6,8 @@
 #include "Camera/PlayerCameraManager.h"
 #include "SharedCameraManager.generated.h"
 
-/**
- * 
- */
+class ASharedCamera;
+
 UCLASS()
 class CS2PROJECT_API ASharedCameraManager : public APlayerCameraManager
 {
@@ -16,4 +15,8 @@ class CS2PROJECT_API ASharedCameraManager : public APlayerCameraManager
 	
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Camera")
+	ASharedCamera* CameraRef;
 };

@@ -14,10 +14,10 @@ void ASharedCameraManager::BeginPlay()
 	FVector SpawnLocation = FVector(0.f, 0.f, 0.f); 
 	FRotator SpawnRotation = FRotator(-60.f, 0.f, 0.f); 
     
-	ASharedCamera* SharedCam = GetWorld()->SpawnActor<ASharedCamera>(
+	CameraRef = GetWorld()->SpawnActor<ASharedCamera>(
 		ASharedCamera::StaticClass(), SpawnLocation, SpawnRotation);
 
-	if (SharedCam)
+	if (CameraRef)
 	{
 		// Set as view target for both players
 		APlayerController* PC0 = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -25,11 +25,11 @@ void ASharedCameraManager::BeginPlay()
 
 		if (PC0)
 		{
-			PC0->SetViewTargetWithBlend(SharedCam, 0.5f);
+			PC0->SetViewTargetWithBlend(CameraRef, 0.5f);
 		}
 		if (PC1)
 		{
-			PC1->SetViewTargetWithBlend(SharedCam, 0.5f);
+			PC1->SetViewTargetWithBlend(CameraRef, 0.5f);
 		}
 	}
 }

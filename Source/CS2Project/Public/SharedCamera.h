@@ -43,7 +43,7 @@ public:
 	float ZoomOutSeparation = 900.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float CameraInterpSpeed = 6.f;
+	float CameraInterpSpeed = 3.f;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float PositionInterpSpeed = 8.f;
@@ -53,6 +53,20 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Camera|Boundary")
 	float BoundaryRadius = 600.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	TArray<FRotator> CameraPerspectives = {
+		FRotator(-60.f, 0.f, 0.f),
+		FRotator(-45.f, 90.f, 0.f),
+		FRotator(-30.f, 180.f, 0.f),
+		FRotator(-45.f, -90.f, 0.f)
+	};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Camera")
+	int32 CurrentPerspectiveIndex = 0;
+
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetCameraPerspectiveIndex(int32 PerspectiveIndex);
 
 private:
 	void UpdateCamera(float DeltaTime, const TArray<APawn*>& Players);

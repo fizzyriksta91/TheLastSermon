@@ -80,6 +80,23 @@ float ASharedCamera::ComputeSeparation(const TArray<APawn*>& Players) const
 	return MaxDistance * 2.f;
 }
 
+void ASharedCamera::SetCameraPerspectiveIndex(int32 PerspectiveIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("SetCameraPerspectiveIndex called with index: %d"), PerspectiveIndex);
+	UE_LOG(LogTemp, Warning, TEXT("CameraPerspectives array size: %d"), CameraPerspectives.Num());
+
+	if (CameraPerspectives.IsValidIndex(PerspectiveIndex))
+	{
+		CurrentPerspectiveIndex = PerspectiveIndex;
+		UE_LOG(LogTemp, Warning, TEXT("Successfully set perspective to index: %d"), PerspectiveIndex);
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid perspective index: %d"), PerspectiveIndex);
+	}
+}
+
 void ASharedCamera::UpdateCamera(float DeltaTime, const TArray<APawn*>& Players)
 {
 	FVector Center = ComputeCenter(Players);
@@ -97,6 +114,13 @@ void ASharedCamera::UpdateCamera(float DeltaTime, const TArray<APawn*>& Players)
 	FVector NewLocation = FMath::VInterpTo(GetActorLocation(),
 		DesiredLocation, DeltaTime, PositionInterpSpeed);
 	SetActorLocation(NewLocation);
+
+	if (CameraPerspectives.IsValidIndex(CurrentPerspectiveIndex))
+	{
+		FRotator TargetRotation = CameraPerspectives[CurrentPerspectiveIndex];
+		FRotator NewRotation = FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, CameraInterpSpeed);
+		SetActorRotation(NewRotation);
+	}
 
 	TArray<APawn*> MutablePlayers = Players;
 	ClampPlayersToBoundary(Center, MutablePlayers);
