@@ -56,9 +56,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TArray<FRotator> CameraPerspectives = {
-		FRotator(-60.f, 0.f, 0.f),
+		FRotator(-20.f, 0.f, 0.f),
 		FRotator(-45.f, 90.f, 0.f),
-		FRotator(-30.f, 180.f, 0.f),
+		FRotator(-90.f, 0.f, 0.f),
 		FRotator(-45.f, -90.f, 0.f)
 	};
 
