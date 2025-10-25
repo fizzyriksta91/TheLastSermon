@@ -89,8 +89,18 @@ float ABaseCharacter::GetDamage(EDamageTypesRH DamageType)
 float ABaseCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
+	if (DodgeComp && DodgeComp->bIsInvulnerable)
+	{
+		return 0.0f; // No damage taken if invulnerable
+	}
+
 	float ActualDamage = Super::TakeDamage(
 		DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	UE_LOG(LogTemp, Warning, TEXT("%s took %.1f damage from %s (Instigator: %s)"),
+		*GetName(), ActualDamage,
+		DamageCauser ? *DamageCauser->GetName() : TEXT("NULL"),
+		EventInstigator ? *EventInstigator->GetName() : TEXT("NULL"));
 
 	// Report damage to AI perception system
 	UAISense_Damage::ReportDamageEvent(

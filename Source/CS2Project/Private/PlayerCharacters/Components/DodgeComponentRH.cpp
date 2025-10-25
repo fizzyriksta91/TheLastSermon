@@ -81,6 +81,7 @@ void UDodgeComponentRH::Dodge()
 	float DodgeDuration = 0.5f;
 	AnimInstance->Montage_Play(DodgeMontage);
 	bIsDodging = true;
+	bIsInvulnerable = true;
 	LastDodgeTime = CurrentTime;
 
 	// Disable combat during dodge
@@ -97,6 +98,7 @@ void UDodgeComponentRH::Dodge()
 void UDodgeComponentRH::OnDodgeFinished()
 {
 	bIsDodging = false;
+	bIsInvulnerable = false;
     
 	// Re-enable combat
 	UMeleeCombatComponentRH* MeleeCombatComp = GetOwner()->FindComponentByClass<UMeleeCombatComponentRH>();

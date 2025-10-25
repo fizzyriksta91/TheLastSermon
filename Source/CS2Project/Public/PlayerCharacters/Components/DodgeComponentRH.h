@@ -12,6 +12,7 @@ class CS2PROJECT_API UDodgeComponentRH : public UActorComponent
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditDefaultsOnly, Category = "Dodge")
 	float DodgeCooldown { 3.0f };
 	
 	float LastDodgeTime { -FLT_MAX };
@@ -36,7 +37,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* DodgeMontage;
 	
+	UPROPERTY(VisibleAnywhere, Category = "Dodge")
 	bool bIsDodging { false };
 
+	UPROPERTY(VisibleAnywhere, Category = "Dodge")
+	bool bIsInvulnerable { false };
+
+	UFUNCTION()
 	void OnDodgeFinished();
 };
