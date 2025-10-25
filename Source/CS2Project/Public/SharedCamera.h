@@ -34,29 +34,29 @@ public:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float MinArmLength = 400.f;
+	float MinArmLength { 800.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float MaxArmLength = 800.f;
+	float MaxArmLength { 1000.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float ZoomOutSeparation = 900.f;
+	float ZoomOutSeparation  { 900.f };
 	
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float CameraInterpSpeed = 3.f;
+	float CameraInterpSpeed { 3.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float PositionInterpSpeed = 8.f;
+	float PositionInterpSpeed { 8.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float CameraHeight = 300.f;
+	float CameraHeight  { 0.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera|Boundary")
-	float BoundaryRadius = 600.f;
+	float BoundaryRadius  { 600.f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	TArray<FRotator> CameraPerspectives = {
-		FRotator(-20.f, 0.f, 0.f),
+		FRotator(-45.f, 0.f, 0.f),
 		FRotator(-45.f, 90.f, 0.f),
 		FRotator(-90.f, 0.f, 0.f),
 		FRotator(-45.f, -90.f, 0.f)

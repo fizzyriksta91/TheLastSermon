@@ -20,8 +20,10 @@ ASharedCamera::ASharedCamera()
 	SpringArmComponent->TargetArmLength = MinArmLength;
 	SpringArmComponent->bDoCollisionTest = false;
 	
+	
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
+	CameraComponent->SetFieldOfView(110.f);
 }
 
 // Called when the game starts or when spawned
