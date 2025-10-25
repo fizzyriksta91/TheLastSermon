@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacters/ProjectileBaseRH.h"
+#include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Interfaces/CombatRH.h"
 
@@ -48,6 +49,15 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 	if (CurrentTime - LastShotTime < ShotCooldown)
 	{
 		return; // Still in cooldown
+	}
+
+	// Check if dodging
+	if (UDodgeComponentRH* DodgeComp = GetOwner()->FindComponentByClass<UDodgeComponentRH>())
+	{
+		if (DodgeComp->bIsDodging)
+		{
+			return;
+		}
 	}
 
 	RotateTowardsNearestEnemy();
@@ -100,6 +110,15 @@ void URangeCombatComponentRH::StartChargeShot()
 	}
 
 	if (!CharacterRef || bIsCharging) { return; }
+
+	// Check if dodging
+	if (UDodgeComponentRH* DodgeComp = GetOwner()->FindComponentByClass<UDodgeComponentRH>())
+	{
+		if (DodgeComp->bIsDodging)
+		{
+			return;
+		}
+	}
 
 	// Disable character movement
 	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
