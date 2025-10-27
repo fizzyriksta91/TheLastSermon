@@ -5,6 +5,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Interactables/InteractableRH.h"
 #include "Perception/AISense_Damage.h"
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
@@ -164,6 +165,54 @@ float ABaseCharacter::GetHealthPercent() const
 		return (MaxHealth > 0.0f) ? CurrentHealth / MaxHealth : 0.0f;
 	}
 	return 0.0f;
+}
+
+void ABaseCharacter::HealToFull()
+{
+	if (StatsComp)
+	{
+		StatsComp->Stats[EStatsRH::Health] = StatsComp->Stats[EStatsRH::MaxHealth];
+		UE_LOG(LogTemp, Warning, TEXT("%s healed to full health!"), *GetName());
+	}
+}
+
+void ABaseCharacter::TryInteract()
+{
+	if (!GetCapsuleComponent())
+	{
+		UE_LOG(LogTemp, Error, TEXT("CapsuleComponent is null!"));
+		return;
+	}
+
+	TArray<AActor*> OverlappingActors;
+	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors);
+
+	float ClosestDistance = InteractionDistance;
+	AActor* ClosestInteractable = nullptr;
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (!Actor || !IsValid(Actor) || Actor == this)
+		{
+			continue;
+		}
+		
+		if (Actor && Actor->GetClass()->ImplementsInterface(UInteractableRH::StaticClass()))
+		{
+			float Distance = FVector::Dist(GetActorLocation(), Actor->GetActorLocation());
+			if (Distance < ClosestDistance)
+			{
+				ClosestDistance = Distance;
+				ClosestInteractable = Actor;
+			}
+		}
+	}
+
+	if (ClosestInteractable)
+	{
+		IInteractableRH::Execute_Interact(ClosestInteractable, this);
+		UE_LOG(LogTemp, Warning, TEXT("%s interacted with %s"), *GetName(), *ClosestInteractable->GetName());
+	}
 }
 
 

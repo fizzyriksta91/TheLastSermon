@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InteractableRH.h"
 #include "GameFramework/Actor.h"
 #include "CampFireRH.generated.h"
 
 UCLASS()
-class CS2PROJECT_API ACampFireRH : public AActor
+class CS2PROJECT_API ACampFireRH : public AActor , public IInteractableRH
 {
 	GENERATED_BODY()
 	
@@ -20,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* MeshComp;
+	class UStaticMeshComponent* StaticMesh;
 
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* InteractionSphere;
@@ -28,5 +29,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void Interact_Implementation(AActor* InteractingActor) override;
 
 };

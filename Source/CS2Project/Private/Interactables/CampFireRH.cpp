@@ -4,6 +4,7 @@
 #include "Interactables/CampFireRH.h"
 
 #include "Components/SphereComponent.h"
+#include "PlayerCharacters/BaseCharacter.h"
 
 // Sets default values
 ACampFireRH::ACampFireRH()
@@ -11,9 +12,9 @@ ACampFireRH::ACampFireRH()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	InteractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSphere"));
-	InteractionSphere->SetupAttachment(MeshComp);
+	InteractionSphere->SetupAttachment(StaticMesh);
 	InteractionSphere->SetSphereRadius(100.f);
 
 }
@@ -22,6 +23,7 @@ ACampFireRH::ACampFireRH()
 void ACampFireRH::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
@@ -32,3 +34,15 @@ void ACampFireRH::Tick(float DeltaTime)
 
 }
 
+void ACampFireRH::Interact_Implementation(AActor* InteractingActor)
+{
+	if (!InteractingActor)
+		return;
+
+	ABaseCharacter* Character = Cast<ABaseCharacter>(InteractingActor);
+	if (Character)
+	{
+		Character->HealToFull();
+		UE_LOG(LogTemp, Warning, TEXT("%s healed at campfire!"), *Character->GetName());
+	}
+}
