@@ -75,5 +75,13 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealthPercent() const;
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void HealToFull();
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void TryInteract();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	float InteractionDistance = 300.0f;
 };

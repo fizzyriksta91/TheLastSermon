@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Perception/AISense_Damage.h"
 
 
 // Sets default values
@@ -73,6 +74,10 @@ void AProjectileBaseRH::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 			DamageEvent, 
 			GetInstigatorController(), 
 			this);
+
+		UAISense_Damage::ReportDamageEvent(
+			GetWorld(), OtherActor, GetOwner(), ActualDamage,
+   GetOwner()->GetActorLocation(), Hit.Location);
 
 		UE_LOG(LogTemp, Warning, TEXT("Projectile hit %s, Applied Damage: %f, DamageType: %d"),
 			   *OtherActor->GetName(), ActualDamage, DamageType);
