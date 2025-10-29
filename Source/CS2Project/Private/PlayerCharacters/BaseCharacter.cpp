@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "PlayerCharacters/BaseCharacter.h"
 
 #include "Components/CapsuleComponent.h"
@@ -23,7 +22,8 @@ ABaseCharacter::ABaseCharacter()
 	StatsComp = CreateDefaultSubobject<UStatsComponentRH>(TEXT("Stats Component"));
 	TraceComp = CreateDefaultSubobject<UTraceComponentRH>(TEXT("Trace Component"));
 	DodgeComp = CreateDefaultSubobject<UDodgeComponentRH>(TEXT("Dodge Component"));
-	
+
+	GetCharacterMovement()->SetWalkableFloorAngle(10.f);
 } 
 
 // Called when the game starts or when spawned
