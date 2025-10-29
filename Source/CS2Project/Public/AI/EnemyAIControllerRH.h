@@ -41,8 +41,6 @@ protected:
 
 	virtual void OnPossess(APawn* InPawn) override;
 	
-	virtual void OnUnPossess() override;
-	
 	void InitializeBlackboard();
 
 	EEnemyStatesRH GetCurrentState() const;
@@ -57,5 +55,9 @@ protected:
 	
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
+private:
+	void StartBehaviorTreeDeferred();
 	
+	FTimerHandle BehaviorTreeStartTimer;
 };

@@ -40,25 +40,12 @@ void AEnemyAIControllerRH::OnPossess(APawn* InPawn)
 
 	UE_LOG(LogTemp, Warning, TEXT("OnPossess: %s possessed by %s"), *GetName(), InPawn ? *InPawn->GetName() : TEXT("null"));
 
-	// Start the behavior tree
-	if (BehaviorTreeAsset)
+	const float StartDelay = 0.15f;
+	if (GetWorld())
 	{
-		if (RunBehaviorTree(BehaviorTreeAsset))
-		{
-			BlackboardComp = GetBlackboardComponent();
-			InitializeBlackboard();
-			UE_LOG(LogTemp, Warning, TEXT("Behavior tree started on possess"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to run BehaviorTreeAsset on possess"));
-		}
+		GetWorldTimerManager().SetTimer(BehaviorTreeStartTimer, this, &AEnemyAIControllerRH::StartBehaviorTreeDeferred, StartDelay, false);
 	}
-}
-
-void AEnemyAIControllerRH::OnUnPossess()
-{
-	Super::OnUnPossess();
+	
 }
 
 void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
@@ -81,6 +68,26 @@ void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedAct
 			HandleSensedDamage(Actor);
 			UE_LOG(LogTemp, Warning, TEXT("Damage Actor Detected"));
 		}
+	}
+}
+
+void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
+{
+	if (!BehaviorTreeAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No BehaviorTreeAsset assigned"));
+		return;
+	}
+
+	if (RunBehaviorTree(BehaviorTreeAsset))
+	{
+		BlackboardComp = GetBlackboardComponent();
+		InitializeBlackboard();
+		UE_LOG(LogTemp, Warning, TEXT("Behavior tree started (deferred)"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to run BehaviorTreeAsset (deferred)"));
 	}
 }
 
