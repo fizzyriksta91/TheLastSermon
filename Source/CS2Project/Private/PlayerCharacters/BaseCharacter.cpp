@@ -23,7 +23,7 @@ ABaseCharacter::ABaseCharacter()
 	TraceComp = CreateDefaultSubobject<UTraceComponentRH>(TEXT("Trace Component"));
 	DodgeComp = CreateDefaultSubobject<UDodgeComponentRH>(TEXT("Dodge Component"));
 
-	GetCharacterMovement()->SetWalkableFloorAngle(10.f);
+	GetCharacterMovement()->SetWalkableFloorAngle(25.f);
 } 
 
 // Called when the game starts or when spawned
