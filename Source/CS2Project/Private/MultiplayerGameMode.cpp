@@ -8,6 +8,7 @@
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
 
 // Adds a local player to the game
 void AMultiplayerGameMode::AddLocalPlayer()
@@ -21,6 +22,20 @@ void AMultiplayerGameMode::AddLocalPlayer()
 		// Ensure the game instance is valid
 		if (GameInstance)
 		{
+			// Log current state before adding
+			UE_LOG(LogTemp, Warning, TEXT("=== BEFORE AddLocalPlayer ==="));
+			UE_LOG(LogTemp, Warning, TEXT("Local Players: %d"), GameInstance->GetLocalPlayers().Num());
+            
+			int32 ControllerCount = 0;
+			for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+			{
+				APlayerController* PC = It->Get();
+				UE_LOG(LogTemp, Warning, TEXT("Controller %d: %s | Pawn: %s"), 
+					ControllerCount++, 
+					*PC->GetName(), 
+					PC->GetPawn() ? *PC->GetPawn()->GetName() : TEXT("NULL"));
+			}
+
 			FString Error;
 
 			// Create a new local player
@@ -46,3 +61,4 @@ void AMultiplayerGameMode::AddLocalPlayer()
 		}
 	}	
 }
+

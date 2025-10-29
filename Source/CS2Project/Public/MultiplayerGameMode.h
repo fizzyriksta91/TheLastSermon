@@ -16,9 +16,7 @@ class CS2PROJECT_API AMultiplayerGameMode : public AGameModeBase
 
 public:
 	
-
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void AddLocalPlayer();
-
 	
 };
