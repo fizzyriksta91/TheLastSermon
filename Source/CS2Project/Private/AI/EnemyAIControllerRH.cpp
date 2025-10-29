@@ -29,17 +29,36 @@ void AEnemyAIControllerRH::BeginPlay()
 		AIPerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemyAIControllerRH::OnPerceptionUpdated);
 		UE_LOG(LogTemp, Warning, TEXT("Perception delegate bound"));
 	}
-
-	// Start the behavior tree
-	AEnemyBaseCharacter* Enemy = Cast<AEnemyBaseCharacter>(GetPawn());
-	if (Enemy && BehaviorTreeAsset)
-	{
-		RunBehaviorTree(BehaviorTreeAsset);
-	}
 	
 	// Initialize the blackboard component
 	BlackboardComp = GetBlackboardComponent();
-	InitializeBlackboard();
+}
+
+void AEnemyAIControllerRH::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	UE_LOG(LogTemp, Warning, TEXT("OnPossess: %s possessed by %s"), *GetName(), InPawn ? *InPawn->GetName() : TEXT("null"));
+
+	// Start the behavior tree
+	if (BehaviorTreeAsset)
+	{
+		if (RunBehaviorTree(BehaviorTreeAsset))
+		{
+			BlackboardComp = GetBlackboardComponent();
+			InitializeBlackboard();
+			UE_LOG(LogTemp, Warning, TEXT("Behavior tree started on possess"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to run BehaviorTreeAsset on possess"));
+		}
+	}
+}
+
+void AEnemyAIControllerRH::OnUnPossess()
+{
+	Super::OnUnPossess();
 }
 
 void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
