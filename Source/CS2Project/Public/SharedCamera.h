@@ -34,10 +34,10 @@ public:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float MinArmLength { 800.f };
+	float MinArmLength { 600.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float MaxArmLength { 1000.f };
+	float MaxArmLength { 800.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float ZoomOutSeparation  { 900.f };
