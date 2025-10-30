@@ -16,3 +16,48 @@ ARangePlayerCharacterRH::ARangePlayerCharacterRH()
 	LanternDamageComp = CreateDefaultSubobject<ULanternDamageComponentRH>(TEXT("Lantern Damage Component"));
 	LockOnComp = CreateDefaultSubobject<ULockOnComponentRH>(TEXT("Lock On Component"));
 }
+
+void ARangePlayerCharacterRH::BeginPlay()
+{
+	Super::BeginPlay();
+
+	LanternDamageComp = FindComponentByClass<ULanternDamageComponentRH>();
+	if (!LanternDamageComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT(
+			"Ranged player: LanternDamageComponentRH not found on %s"), *GetName());
+	}
+
+	if (LanternBlueprintClass && GetWorld())
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		SpawnedLantern = GetWorld()->SpawnActor<AActor>(LanternBlueprintClass, GetActorLocation(), GetActorRotation(), SpawnParams);
+		if (SpawnedLantern)
+		{
+			// Attach to mesh socket if provided, otherwise attach to root
+			USceneComponent* AttachTarget = GetRootComponent();
+			if (LanternAttachSocket != NAME_None && GetMesh())
+			{
+				AttachTarget = GetMesh();
+			}
+
+			SpawnedLantern->AttachToComponent(AttachTarget, FAttachmentTransformRules::SnapToTargetNotIncludingScale, LanternAttachSocket);
+			UE_LOG(LogTemp, Warning, TEXT("Spawned lantern %s for %s"), *SpawnedLantern->GetName(), *GetName());
+
+			// Register the lantern with the damage component so player is considered "in light"
+			if (LanternDamageComp)
+			{
+				LanternDamageComp->EnterLight(SpawnedLantern);
+				UE_LOG(LogTemp, Warning, TEXT("Registered spawned lantern with LanternDamageComponent"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to spawn lantern BP for %s"), *GetName());
+		}
+	}
+}

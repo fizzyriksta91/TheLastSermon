@@ -26,4 +26,18 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
 	class ULockOnComponentRH* LockOnComp;
+
+protected:
+	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Lantern")
+	TSubclassOf<AActor> LanternBlueprintClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Lantern")
+	FName LanternAttachSocket = NAME_None;
+
+private:
+	UPROPERTY()
+	AActor* SpawnedLantern = nullptr;
+	
 };
