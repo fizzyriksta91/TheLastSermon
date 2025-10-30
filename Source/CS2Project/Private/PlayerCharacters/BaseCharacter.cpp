@@ -2,6 +2,7 @@
 
 #include "PlayerCharacters/BaseCharacter.h"
 
+#include "MultiplayerGameMode.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interactables/InteractableRH.h"
@@ -147,6 +148,14 @@ void ABaseCharacter::OnDeath()
 		// Set a timer to destroy the character after DeathDelay seconds
 		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
 			&ABaseCharacter::DestroyCharacter, DeathDelay, false);
+	}
+
+	if (HasAuthority() && GetWorld())
+	{
+		if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(GetWorld()->GetAuthGameMode()))
+		{
+			GameMode->NotifyCharacterDeath(this);
+		}
 	}
 }
 // Check if the character is dead

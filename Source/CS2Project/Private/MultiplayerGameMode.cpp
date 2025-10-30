@@ -9,6 +9,7 @@
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
+#include "PlayerCharacters/BaseCharacter.h"
 
 // Adds a local player to the game
 void AMultiplayerGameMode::AddLocalPlayer()
@@ -60,5 +61,34 @@ void AMultiplayerGameMode::AddLocalPlayer()
 			}
 		}
 	}	
+}
+
+void AMultiplayerGameMode::NotifyCharacterDeath(ABaseCharacter* DeadCharacter)
+{
+	if (!HasAuthority() || !GetWorld())
+		return;
+
+	int32 AliveCount = 0;
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PlayerController = It->Get();
+		if (!PlayerController)
+			continue;
+
+		APawn* Pawn = PlayerController->GetPawn();
+		ABaseCharacter* Character = Cast<ABaseCharacter>(Pawn);
+		if (Character && !Character->IsDead())
+		{
+			++AliveCount;
+		}
+	}
+
+	if (AliveCount <= 0)
+	{
+		FString MapName = GetWorld()->GetMapName();
+		FString ShortName = FPackageName::GetShortName(MapName);
+		UGameplayStatics::OpenLevel(this, FName(*ShortName));
+		UE_LOG(LogTemp, Warning, TEXT("All players are dead. Restarting level"));
+	}
 }
 

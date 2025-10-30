@@ -6,9 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "MultiplayerGameMode.generated.h"
 
-/**
- * 
- */
+class ABaseCharacter;
+
 UCLASS()
 class CS2PROJECT_API AMultiplayerGameMode : public AGameModeBase
 {
@@ -18,5 +17,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void AddLocalPlayer();
+
+	UFUNCTION()
+	void NotifyCharacterDeath(ABaseCharacter* DeadCharacter);
 	
 };

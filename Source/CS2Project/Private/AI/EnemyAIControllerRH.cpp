@@ -50,6 +50,11 @@ void AEnemyAIControllerRH::OnPossess(APawn* InPawn)
 
 void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
+	if (!bBehaviorTreeStarted)
+	{
+		return;
+	}
+
 	for (AActor* Actor : UpdatedActors)
 	{
 		// Check if the actor can be sensed by sight, hearing, or damage
@@ -83,6 +88,12 @@ void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
 	{
 		BlackboardComp = GetBlackboardComponent();
 		InitializeBlackboard();
+		bBehaviorTreeStarted = true;
+
+		if (AIPerceptionComponent)
+		{
+			AIPerceptionComponent->ForgetAll();
+		}
 		UE_LOG(LogTemp, Warning, TEXT("Behavior tree started (deferred)"));
 	}
 	else

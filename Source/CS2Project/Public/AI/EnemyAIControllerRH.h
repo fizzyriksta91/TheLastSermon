@@ -60,4 +60,6 @@ private:
 	void StartBehaviorTreeDeferred();
 	
 	FTimerHandle BehaviorTreeStartTimer;
+
+	bool bBehaviorTreeStarted = false;
 };
