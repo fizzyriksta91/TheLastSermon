@@ -38,7 +38,7 @@ void ARangePlayerCharacterRH::BeginPlay()
 		SpawnedLantern = GetWorld()->SpawnActor<AActor>(LanternBlueprintClass, GetActorLocation(), GetActorRotation(), SpawnParams);
 		if (SpawnedLantern)
 		{
-			// Attach to mesh socket if provided, otherwise attach to root
+			
 			USceneComponent* AttachTarget = GetRootComponent();
 			if (LanternAttachSocket != NAME_None && GetMesh())
 			{
