@@ -16,7 +16,7 @@ AProjectileBaseRH::AProjectileBaseRH()
 	PrimaryActorTick.bCanEverTick = false;
 	
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	CollisionComp->InitSphereRadius(8.0f);
+	CollisionComp->InitSphereRadius(50.0f);
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileBaseRH::OnHit);
 	RootComponent = CollisionComp;
 
