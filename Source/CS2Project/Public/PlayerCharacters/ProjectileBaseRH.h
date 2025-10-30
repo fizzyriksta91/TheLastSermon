@@ -22,6 +22,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	float Damage = 0.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	float LifeSpanSeconds = 1.0f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

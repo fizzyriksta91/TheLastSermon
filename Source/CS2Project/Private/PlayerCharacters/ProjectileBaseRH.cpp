@@ -31,7 +31,11 @@ AProjectileBaseRH::AProjectileBaseRH()
 void AProjectileBaseRH::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (LifeSpanSeconds > 0.0f)
+	{
+		SetLifeSpan(LifeSpanSeconds);
+	}
 }
 
 // Called every frame
