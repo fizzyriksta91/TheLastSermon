@@ -62,4 +62,6 @@ private:
 	FTimerHandle BehaviorTreeStartTimer;
 
 	bool bBehaviorTreeStarted = false;
+
+	bool IsValidTarget(AActor* Actor) const;
 };

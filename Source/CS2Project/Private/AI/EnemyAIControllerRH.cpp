@@ -40,7 +40,7 @@ void AEnemyAIControllerRH::OnPossess(APawn* InPawn)
 
 	UE_LOG(LogTemp, Warning, TEXT("OnPossess: %s possessed by %s"), *GetName(), InPawn ? *InPawn->GetName() : TEXT("null"));
 
-	const float StartDelay = 0.15f;
+	const float StartDelay = 0.3f;
 	if (GetWorld())
 	{
 		GetWorldTimerManager().SetTimer(BehaviorTreeStartTimer, this, &AEnemyAIControllerRH::StartBehaviorTreeDeferred, StartDelay, false);
@@ -57,6 +57,9 @@ void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedAct
 
 	for (AActor* Actor : UpdatedActors)
 	{
+		if (!IsValidTarget(Actor))
+			continue;
+
 		// Check if the actor can be sensed by sight, hearing, or damage
 		if (CanSenseActor(Actor, EAISenseRH::Sight))
 		{
@@ -100,6 +103,28 @@ void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to run BehaviorTreeAsset (deferred)"));
 	}
+}
+
+bool AEnemyAIControllerRH::IsValidTarget(AActor* Actor) const
+{
+	if (!Actor || Actor == GetPawn())
+		return false;
+
+	if (Actor->IsA(AEnemyBaseCharacter::StaticClass()))
+		return false;
+
+	APawn* TargetPawn = Cast<APawn>(Actor);
+	if (!TargetPawn)
+		return false;
+
+	if (!TargetPawn->IsPlayerControlled())
+		return false;
+
+	ICombatRH* CombatInterface = Cast<ICombatRH>(Actor);
+	if (CombatInterface && CombatInterface->IsDead())
+		return false;
+
+	return true;
 }
 
 // Initialize the blackboard and set the initial state
@@ -250,7 +275,7 @@ void AEnemyAIControllerRH::HandleSensedDamage(AActor* Actor)
 bool AEnemyAIControllerRH::CanSenseActor(AActor* Actor, EAISenseRH Sense) const
 {
 	// Ensure the actor and perception component are valid
-	if (!Actor || !AIPerceptionComponent)
+	if (!IsValidTarget(Actor) || !AIPerceptionComponent)
 		return false;
 
 	// Get perception info for the actor and check stimuli
