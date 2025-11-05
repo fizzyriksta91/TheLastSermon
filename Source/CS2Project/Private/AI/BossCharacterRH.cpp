@@ -3,3 +3,21 @@
 
 #include "AI/BossCharacterRH.h"
 
+#include "PlayerCharacters/Components/TraceComponentRH.h"
+
+void ABossCharacterRH::PerformKickCombo()
+{
+	if (!KickComboAnimMontage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No KickComboAnimMontage"));
+		return;
+	}
+
+	if (TraceComp)
+	{
+		TraceComp->SetCurrentDamageType(EDamageTypesRH::KickAttack);
+		TraceComp->HandleResetAttack();
+	}
+	
+	PlayAnimMontage(KickComboAnimMontage);
+}

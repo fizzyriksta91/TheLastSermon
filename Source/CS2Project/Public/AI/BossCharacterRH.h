@@ -13,5 +13,12 @@ UCLASS()
 class CS2PROJECT_API ABossCharacterRH : public AEnemyBaseCharacter
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void PerformKickCombo();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	UAnimMontage* KickComboAnimMontage;
 };

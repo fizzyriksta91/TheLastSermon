@@ -12,4 +12,5 @@ enum EDamageTypesRH
 	HeavyAttack UMETA(DisplayName = "Heavy Attack"),
 	GunShot UMETA(DisplayName = "Gun Shot"),
 	ChargeShot UMETA(DisplayName = "Charge Shot"),
+	KickAttack UMETA(DisplayName = "Kick Attack")
 };
