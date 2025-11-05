@@ -81,13 +81,29 @@ void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedAct
 
 void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
 {
-	if (!BehaviorTreeAsset)
+	UBehaviorTree* TreeToRun = nullptr;
+
+	APawn* PossessedPawn = GetPawn();
+	if (PossessedPawn)
+	{
+		if (AEnemyBaseCharacter* EnemyPawn = Cast<AEnemyBaseCharacter>(PossessedPawn))
+		{
+			TreeToRun = EnemyPawn->BehaviorTreeAssetOverride;
+		}
+	}
+
+	if (!TreeToRun)
+	{
+		TreeToRun = BehaviorTreeAsset;
+	}
+
+	if (!TreeToRun)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No BehaviorTreeAsset assigned"));
 		return;
 	}
 
-	if (RunBehaviorTree(BehaviorTreeAsset))
+	if (RunBehaviorTree(TreeToRun))
 	{
 		BlackboardComp = GetBlackboardComponent();
 		InitializeBlackboard();
