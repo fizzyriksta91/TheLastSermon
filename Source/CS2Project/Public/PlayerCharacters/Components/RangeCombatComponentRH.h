@@ -12,7 +12,15 @@ class CS2PROJECT_API URangeCombatComponentRH : public UActorComponent
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* PrimaryAttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* ChargeAttackMontage;
 	
+	FTimerHandle PrimaryFireSpawnTimerHandle;
+	
+	FTimerHandle ChargeShotSpawnTimerHandle;
 
 public:	
 	// Sets default values for this component's properties
@@ -67,6 +75,10 @@ private:
 	FTimerHandle ChargeShotTimerHandle;
 
 	void FireChargeShot();
+
+	void SpawnPrimaryProjectile();
+
+	void SpawnChargeProjectile();
 
 	void RotateTowardsNearestEnemy();
 
