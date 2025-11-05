@@ -18,6 +18,7 @@ void UToggleTraceNotifyStateRH::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 
 	// Ensure TraceComp is valid and set attacking to true
 	if (!IsValid(TraceComp)) { return; }
+	
 	TraceComp->bIsAttacking = true;
 }
 
