@@ -18,7 +18,20 @@ class CS2PROJECT_API UBTT_KickComboAttackRH : public UBTTaskNode
 	UPROPERTY()
 	TEnumAsByte<EDamageTypesRH> CurrentDamageType { EDamageTypesRH::None };
 
+	UPROPERTY()
+	UBehaviorTreeComponent* CachedOwnerComp = nullptr;
+
+	UPROPERTY()
+	UAnimInstance* BoundAnimInstance = nullptr;
+
 public:
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	UBTT_KickComboAttackRH();
 	
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+protected:
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	FOnMontageEnded MontageEndDelegate;
 };
