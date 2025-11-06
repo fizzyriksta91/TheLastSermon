@@ -94,12 +94,13 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 	// Get Damage from Combat Interface
 	float CharacterDamage{ 0.0f };
+	AActor* OwnerActor = GetOwner();
 	ICombatRH* CombatInterface{ Cast<ICombatRH>(GetOwner()) };
 
 	// If the cast is successful, get the damage value
-	if (CombatInterface)
+	if (OwnerActor && OwnerActor->GetClass()->ImplementsInterface(UCombatRH::StaticClass()))
 	{
-		CharacterDamage = CombatInterface->GetDamage(CurrentDamageType);
+		CharacterDamage = ICombatRH::Execute_GetDamage(OwnerActor, CurrentDamageType);
 	}
 	
 	FDamageEvent TargetAttackEvent;

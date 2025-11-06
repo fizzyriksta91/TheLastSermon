@@ -21,3 +21,8 @@ void ABossCharacterRH::PerformKickCombo()
 	
 	PlayAnimMontage(KickComboAnimMontage);
 }
+
+void ABossCharacterRH::SetDamageType(TEnumAsByte<EDamageTypesRH> NewType)
+{
+	DamageType = NewType;
+}

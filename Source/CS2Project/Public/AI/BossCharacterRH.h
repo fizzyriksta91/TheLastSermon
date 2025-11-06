@@ -18,6 +18,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void PerformKickCombo();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	TEnumAsByte<EDamageTypesRH> DamageType;
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void SetDamageType(TEnumAsByte<EDamageTypesRH> NewType);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	UAnimMontage* KickComboAnimMontage;

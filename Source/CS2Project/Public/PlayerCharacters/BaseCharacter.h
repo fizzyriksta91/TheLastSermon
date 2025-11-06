@@ -59,7 +59,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual float GetDamage(EDamageTypesRH DamageType) override;
+	virtual float GetDamage_Implementation(EDamageTypesRH DamageType) override;
 
 	virtual float TakeDamage(
 		float DamageAmount, struct FDamageEvent const& DamageEvent,

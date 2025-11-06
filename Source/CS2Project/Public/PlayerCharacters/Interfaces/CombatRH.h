@@ -21,7 +21,9 @@ class CS2PROJECT_API ICombatRH
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual float GetDamage(EDamageTypesRH DamageType) { return 0.0f; }
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Combat")
+	float GetDamage(EDamageTypesRH DamageType);
+	virtual float GetDamage_Implementation(EDamageTypesRH DamageType) { return 0.0f; }
 
 	virtual void Attack() {}
 

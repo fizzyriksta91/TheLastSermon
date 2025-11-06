@@ -181,11 +181,11 @@ void URangeCombatComponentRH::SpawnPrimaryProjectile()
 
 	if (AProjectileBaseRH* Projectile = Cast<AProjectileBaseRH>(SpawnedProjectile))
 	{
-		Projectile->DamageType = EDamageTypesRH::ChargeShot;
+		Projectile->DamageType = EDamageTypesRH::GunShot;
 
 		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
 		{
-			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::ChargeShot);
+			Projectile->Damage = ICombatRH::Execute_GetDamage(CharacterRef, EDamageTypesRH::GunShot);
 		}
 	}
 }
@@ -211,7 +211,7 @@ void URangeCombatComponentRH::SpawnChargeProjectile()
 		Projectile->DamageType = EDamageTypesRH::ChargeShot;
 		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
 		{
-			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::ChargeShot);
+			Projectile->Damage = ICombatRH::Execute_GetDamage(CharacterRef, EDamageTypesRH::ChargeShot);
 		}
 		Projectile->SetActorScale3D(FVector(1.5f));
 	}
