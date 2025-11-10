@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerCharacters/BaseCharacter.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "PlayerCharacters/Interfaces/EnemyRH.h"
 #include "EnemyBaseCharacter.generated.h"
 
@@ -23,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void PerformMeleeAttack();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
+	UBehaviorTree* BehaviorTreeAssetOverride;
 
 protected:
 	virtual void BeginPlay() override;

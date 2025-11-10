@@ -87,7 +87,7 @@ void AEnemySpawner::SpawnEnemies()
 		FActorSpawnParameters AIParams;
 		AIParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		AEnemyAIControllerRH* NewAI = GetWorld()->SpawnActor<AEnemyAIControllerRH>(
-		 AEnemyAIControllerRH::StaticClass(), SpawnLocation, SpawnRotation, AIParams);
+				AEnemyAIControllerRH::StaticClass(), SpawnLocation, SpawnRotation, AIParams);
 		if (NewAI)
 		{
 			NewAI->Possess(SpawnedEnemy);
@@ -96,7 +96,8 @@ void AEnemySpawner::SpawnEnemies()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to spawn AI controller for %s"), *SpawnedEnemy->GetName());
+			UE_LOG(LogTemp, Warning, TEXT(
+				"Failed to spawn AI controller for %s"), *SpawnedEnemy->GetName());
 		}
 	}
 	else

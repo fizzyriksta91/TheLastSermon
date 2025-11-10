@@ -47,9 +47,7 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 	// Check Cooldown
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 	if (CurrentTime - LastShotTime < ShotCooldown)
-	{
-		return; // Still in cooldown
-	}
+		return;
 
 	// Check if dodging
 	if (UDodgeComponentRH* DodgeComp = GetOwner()->FindComponentByClass<UDodgeComponentRH>())
@@ -70,33 +68,26 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 		Character->GetCharacterMovement()->DisableMovement();
 	}
 
-	FVector SpawnLocation = CharacterRef->GetActorLocation() +
-		CharacterRef->GetActorForwardVector() * 100.0f;
-	FRotator SpawnRotation = CharacterRef->GetActorRotation();
-
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.Owner = GetOwner();
-	SpawnParameters.Instigator = CharacterRef->GetInstigator();
-
-	AActor* SpawnedProjectile = GetWorld()->SpawnActor<AActor>(
-		ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
-
-	if (AProjectileBaseRH* Projectile = Cast<AProjectileBaseRH>(SpawnedProjectile))
+	if (PrimaryAttackMontage && CharacterRef)
 	{
-		Projectile->DamageType = EDamageTypesRH::GunShot;
-
-		// Calculate damage using the character's GetDamage method
-		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
-		{
-			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::GunShot);
-		}
+		float MontageDuration = CharacterRef->PlayAnimMontage(PrimaryAttackMontage);
+		float SpawnDelay = FMath::Min(MontageDuration, 0.1f); 
+		GetWorld()->GetTimerManager().SetTimer(
+			PrimaryFireSpawnTimerHandle, this,
+			&URangeCombatComponentRH::SpawnPrimaryProjectile,
+			SpawnDelay, false);
+	}
+	else
+	{
+		// Fallback: spawn immediately if no montage assigned
+		SpawnPrimaryProjectile();
 	}
 
 	GetWorld()->GetTimerManager().SetTimer(
 		PrimaryFireMovementTimerHandle, this,
 		&URangeCombatComponentRH::ReEnableMovementAfterPrimaryFire,
 		PrimaryFireMovementLockDuration, false);
-	
+
 	LastShotTime = CurrentTime;
 }
 
@@ -155,6 +146,26 @@ void URangeCombatComponentRH::CancelChargeShot()
 
 void URangeCombatComponentRH::FireChargeShot()
 {
+	if (!ProjectileClass || !CharacterRef) return;
+
+	if (ChargeAttackMontage && CharacterRef)
+	{
+		float MontageDuration = CharacterRef->PlayAnimMontage(ChargeAttackMontage);
+		float SpawnDelay = FMath::Min(MontageDuration, 0.1f); // adjust to sync with animation
+		GetWorld()->GetTimerManager().SetTimer(
+			ChargeShotSpawnTimerHandle, this,
+			&URangeCombatComponentRH::SpawnChargeProjectile,
+			SpawnDelay, false);
+	}
+	else
+	{
+		SpawnChargeProjectile();
+	}
+	
+}
+
+void URangeCombatComponentRH::SpawnPrimaryProjectile()
+{
 	if (!ProjectileClass || !CharacterRef) { return; }
 
 	FVector SpawnLocation = CharacterRef->GetActorLocation() +
@@ -170,25 +181,43 @@ void URangeCombatComponentRH::FireChargeShot()
 
 	if (AProjectileBaseRH* Projectile = Cast<AProjectileBaseRH>(SpawnedProjectile))
 	{
-		Projectile->DamageType = EDamageTypesRH::ChargeShot;
+		Projectile->DamageType = EDamageTypesRH::GunShot;
 
 		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
 		{
-			Projectile->Damage = CombatInterface->GetDamage(EDamageTypesRH::ChargeShot);
+			Projectile->Damage = ICombatRH::Execute_GetDamage(CharacterRef, EDamageTypesRH::GunShot);
 		}
-
-		Projectile->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
 	}
+}
 
-	// Re-enable character movement
-	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+void URangeCombatComponentRH::SpawnChargeProjectile()
+{
+	if (!ProjectileClass || !CharacterRef) return;
+
+	FVector SpawnLocation = CharacterRef->GetActorLocation() +
+		CharacterRef->GetActorForwardVector() * 100.0f;
+	FRotator SpawnRotation = CharacterRef->GetActorRotation();
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = GetOwner();
+	SpawnParameters.Instigator = CharacterRef->GetInstigator();
+
+	AActor* SpawnedProjectile = GetWorld()->SpawnActor<AActor>(
+		ProjectileClass, SpawnLocation, SpawnRotation, SpawnParameters);
+
+	if (AProjectileBaseRH* Projectile = Cast<AProjectileBaseRH>(SpawnedProjectile))
 	{
-		Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		CharacterRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		Projectile->DamageType = EDamageTypesRH::ChargeShot;
+		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
+		{
+			Projectile->Damage = ICombatRH::Execute_GetDamage(CharacterRef, EDamageTypesRH::ChargeShot);
+		}
+		Projectile->SetActorScale3D(FVector(1.5f));
 	}
 
 	bIsCharging = false;
 	LastChargeShotTime = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Display, TEXT("Charge shot fired"));
 }
 
 void URangeCombatComponentRH::RotateTowardsNearestEnemy()
