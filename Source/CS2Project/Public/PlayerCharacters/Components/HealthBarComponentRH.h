@@ -20,6 +20,15 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "HealthBar")
+	TSubclassOf<UUserWidget> BossHealthWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* BossHealthWidget;
+
+	UPROPERTY(EditAnywhere, Category = "HealthBar")
+	bool bUseViewportForBoss = true;
+	
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 		FActorComponentTickFunction* ThisTickFunction) override;

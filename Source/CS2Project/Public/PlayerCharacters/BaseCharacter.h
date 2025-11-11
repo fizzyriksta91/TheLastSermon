@@ -84,4 +84,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionDistance = 300.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	bool bIsBoss = false;
+
+	UFUNCTION(BlueprintPure, Category = "Character")
+	bool IsBoss() const { return bIsBoss; }
 };

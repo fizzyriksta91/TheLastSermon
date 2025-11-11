@@ -20,5 +20,22 @@ public:
 
 	UFUNCTION()
 	void NotifyCharacterDeath(ABaseCharacter* DeadCharacter);
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> BossDefeatWidgetClass;
+
+	UFUNCTION(BlueprintCallable)
+	void OnBossDefeated();
 	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	float BossDefeatUIDelay = 2.0f;
+
+protected:
+	UPROPERTY()
+	UUserWidget* BossDefeatWidget;
+
+private:
+	void ShowBossDefeatUI();
+
+	FTimerHandle BossDefeatTimerHandle;
 };

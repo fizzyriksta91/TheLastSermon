@@ -154,6 +154,11 @@ void ABaseCharacter::OnDeath()
 	{
 		if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(GetWorld()->GetAuthGameMode()))
 		{
+			if (IsBoss())
+			{
+				GameMode->OnBossDefeated();
+			}
+
 			GameMode->NotifyCharacterDeath(this);
 		}
 	}

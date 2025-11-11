@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 #include "SharedCamera.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -89,6 +90,54 @@ void AMultiplayerGameMode::NotifyCharacterDeath(ABaseCharacter* DeadCharacter)
 		FString ShortName = FPackageName::GetShortName(MapName);
 		UGameplayStatics::OpenLevel(this, FName(*ShortName));
 		UE_LOG(LogTemp, Warning, TEXT("All players are dead. Restarting level"));
+	}
+}
+
+void AMultiplayerGameMode::OnBossDefeated()
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	if (BossDefeatUIDelay > KINDA_SMALL_NUMBER)
+	{
+		// Clear any previous timer to avoid duplicates
+		GetWorldTimerManager().ClearTimer(BossDefeatTimerHandle);
+		GetWorldTimerManager().SetTimer(BossDefeatTimerHandle, this, &AMultiplayerGameMode::ShowBossDefeatUI, BossDefeatUIDelay, false);
+	}
+	else
+	{
+		ShowBossDefeatUI();
+	}
+}
+
+void AMultiplayerGameMode::ShowBossDefeatUI()
+{
+	if (!GetWorld() || !BossDefeatWidgetClass)
+	{
+		return;
+	}
+
+	if (!BossDefeatWidget)
+	{
+		BossDefeatWidget = CreateWidget<UUserWidget>(GetWorld(), BossDefeatWidgetClass);
+	}
+
+	if (BossDefeatWidget)
+	{
+		BossDefeatWidget->AddToViewport();
+
+		APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+		if (PC)
+		{
+			PC->bShowMouseCursor = true;
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(BossDefeatWidget->TakeWidget());
+			PC->SetInputMode(InputMode);
+		}
+
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
 }
 
