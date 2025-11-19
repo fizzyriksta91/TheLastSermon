@@ -4,6 +4,7 @@
 
 #include "MultiplayerGameMode.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interactables/InteractableRH.h"
 #include "Perception/AISense_Damage.h"
@@ -144,6 +145,11 @@ void ABaseCharacter::OnDeath()
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		GetMesh()->SetSimulatePhysics(true);
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		
+		if (UWidgetComponent* WidgetComp = FindComponentByClass<UWidgetComponent>())
+		{
+			WidgetComp->DestroyComponent();
+		}
 		
 		// Set a timer to destroy the character after DeathDelay seconds
 		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
