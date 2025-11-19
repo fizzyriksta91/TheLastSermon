@@ -4,15 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "SharedCamera.generated.h"
 
+class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
 class CS2PROJECT_API ASharedCamera : public AActor
 {
 	GENERATED_BODY()
+	
 	
 	
 public:	
@@ -34,7 +35,7 @@ public:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	float MinArmLength { 500.f };
+	float MinArmLength { 200.f };
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float MaxArmLength { 700.f };
@@ -45,16 +46,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float CameraInterpSpeed { 3.f };
 
-	UPROPERTY(EditAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere,  Category = "Camera")
 	float PositionInterpSpeed { 8.f };
 
-	UPROPERTY(EditAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere,  Category = "Camera")
 	float CameraHeight  { 0.f };
 
-	UPROPERTY(EditAnywhere, Category = "Camera|Boundary")
-	float BoundaryRadius  { 600.f };
+	UPROPERTY(EditAnywhere,  Category = "Camera|Boundary")
+	float BoundaryRadius  { 500.f };
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditAnywhere,  Category = "Camera")
 	TArray<FRotator> CameraPerspectives = {
 		FRotator(-45.f, 140.f, 0.f),
 		FRotator(-45.f, 90.f, 0.f),
@@ -62,7 +63,7 @@ public:
 		FRotator(-45.f, -90.f, 0.f)
 	};
 
-	UPROPERTY(BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditAnywhere, Category = "Camera")
 	int32 CurrentPerspectiveIndex = 0;
 
 	UFUNCTION(BlueprintCallable, Category = "Camera")

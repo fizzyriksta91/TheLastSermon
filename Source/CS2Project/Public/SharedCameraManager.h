@@ -17,6 +17,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
+	TSubclassOf<ASharedCamera> SharedCameraClass;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Camera")
 	ASharedCamera* CameraRef;
 };

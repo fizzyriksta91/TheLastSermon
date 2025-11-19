@@ -14,8 +14,15 @@ void ASharedCameraManager::BeginPlay()
 	FVector SpawnLocation = FVector(0.f, 0.f, 0.f); 
 	FRotator SpawnRotation = FRotator(-60.f, 0.f, 0.f); 
     
-	CameraRef = GetWorld()->SpawnActor<ASharedCamera>(
-		ASharedCamera::StaticClass(), SpawnLocation, SpawnRotation);
+	UClass* ToSpawn = SharedCameraClass ? SharedCameraClass.Get() : ASharedCamera::StaticClass();
+	
+	if (ToSpawn && GetWorld())
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		CameraRef = GetWorld()->SpawnActor<ASharedCamera>(
+			ToSpawn, SpawnLocation, SpawnRotation);
+	}
 
 	if (CameraRef)
 	{
