@@ -10,12 +10,13 @@
 #include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
+#include "Math/UnrealMathUtility.h"
 
 
 AEnemyAIControllerRH::AEnemyAIControllerRH()
 {
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
-
+	AttackTarget = nullptr;
 	// Note: The perception delegate is now bound in BeginPlay to ensure the component is fully initialized
 }
 
@@ -161,6 +162,7 @@ void AEnemyAIControllerRH::SetIdleState()
 	
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"), EEnemyStatesRH::IdleState);
+	AttackTarget = nullptr;
 }
 
 // Set the enemy's state to Dead
@@ -171,6 +173,7 @@ void AEnemyAIControllerRH::SetDeadState()
 	
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"), EEnemyStatesRH::DeadState);
+	AttackTarget = nullptr;
 }
 
 // Set the enemy's state to Attacking and choose the closest player as the target
@@ -178,62 +181,67 @@ void AEnemyAIControllerRH::SetAttackingState()
 {
 	if (!BlackboardComp)
 		return;
-	 // Find the closest player pawn 
+
 	APawn* PlayerPawn0 = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	APawn* PlayerPawn1 = UGameplayStatics::GetPlayerPawn(GetWorld(), 1);
 
-	// If no players are found, revert to idle state
-	APawn* ClosestPawn = nullptr;
-	float ClosestDistance = TNumericLimits<float>::Max();
-
-	// Get the enemy's pawn and ensure it's valid
 	APawn* EnemyPawn = GetPawn();
 	if (!EnemyPawn)
+	{
+		SetIdleState();
 		return;
-		
-	// Check distance to Player 0
-	if (PlayerPawn0)
-	{
-		// Ensure the player is alive by checking the combat interface
-		ICombatRH* CombatInterface = Cast<ICombatRH>(PlayerPawn0);
-		if (CombatInterface && !CombatInterface->IsDead())
-		{
-			// Calculate distance to Player 0
-			float Distance = FVector::Dist(
-				EnemyPawn->GetActorLocation(), PlayerPawn0->GetActorLocation());
-			if (Distance < ClosestDistance)
-			{
-				// Update closest player and distance
-				ClosestDistance = Distance;
-				ClosestPawn = PlayerPawn0;
-			}
-		}
 	}
-	// Check distance to Player 1
-	if (PlayerPawn1)
+
+	// Collect valid players
+	TArray<APawn*> Candidates;
+	auto AddIfValid = [&](APawn* Candidate)
 	{
-		ICombatRH* CombatInterface = Cast<ICombatRH>(PlayerPawn1);
-		if (CombatInterface && !CombatInterface->IsDead())
-		{
-			float Distance = FVector::Dist(
-				EnemyPawn->GetActorLocation(), PlayerPawn1->GetActorLocation());
-			if (Distance < ClosestDistance)
-			{
-				ClosestDistance = Distance;
-				ClosestPawn = PlayerPawn1;
-			}
-		}
+		if (!Candidate) 
+			return;
 		
-	}
-	// If a closest player is found, set them as the attack target and change state to Attacking
-	if (ClosestPawn)
+		if (Candidate->IsA(AEnemyBaseCharacter::StaticClass())) 
+			return;
+		
+		if (!Candidate->IsPlayerControlled()) 
+			return;
+		
+		ICombatRH* CombatInterface = Cast<ICombatRH>(Candidate);
+		if (CombatInterface && CombatInterface->IsDead()) 
+			return;
+		
+		Candidates.Add(Candidate);
+	};
+
+	AddIfValid(PlayerPawn0);
+	AddIfValid(PlayerPawn1);
+
+	if (Candidates.Num() == 0)
 	{
-		BlackboardComp->SetValueAsObject(TEXT("AttackTarget"), ClosestPawn);
+		SetIdleState();
+		return;
+	}
+
+	APawn* Chosen = nullptr;
+
+	if (Candidates.Num() == 1)
+	{
+		Chosen = Candidates[0];
+	}
+	else
+	{
+		// Randomly choose one of the candidates
+		int32 Index = FMath::RandRange(0, Candidates.Num() - 1);
+		Chosen = Candidates.IsValidIndex(Index) ? Candidates[Index] : Candidates[0];
+	}
+
+	if (Chosen)
+	{
+		BlackboardComp->SetValueAsObject(TEXT("AttackTarget"), Chosen);
+		AttackTarget = Chosen;
 		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), EEnemyStatesRH::AttackingState);
 	}
 	else
 	{
-		// No valid players found, revert to idle state
 		SetIdleState();
 	}
 }

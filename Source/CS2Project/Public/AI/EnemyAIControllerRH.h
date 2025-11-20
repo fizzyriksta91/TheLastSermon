@@ -25,6 +25,9 @@ public:
 
 	UPROPERTY()
 	class UBlackboardComponent* BlackboardComp;
+	
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "AI")
+	AActor* AttackTarget = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EEnemyStatesRH> InitialState;

@@ -49,7 +49,7 @@ float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
 		Speed = 0.0f;
 		break;
 	case EMovementSpeedRH::Walk:
-		Speed = 100.0f;
+		Speed = 150.0f;
 		break;
 	case EMovementSpeedRH::Jog:
 		Speed = 300.0f;
