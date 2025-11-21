@@ -59,6 +59,25 @@ void ABaseCharacter::DestroyCharacter()
 	Destroy();
 }
 
+void ABaseCharacter::LockMovement()
+{
+	if (bMovementLocked)
+		return;
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		PlayerController->SetIgnoreMoveInput(true);
+		PlayerController->SetIgnoreLookInput(true);
+	}
+
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+	}
+
+	bMovementLocked = true;
+}
+
 // Called every frame
 void ABaseCharacter::Tick(float DeltaTime)
 {
@@ -228,11 +247,35 @@ void ABaseCharacter::TryInteract()
 		}
 	}
 
-	if (ClosestInteractable)
+	if (ClosestInteractable->ActorHasTag(FName(TEXT("Dialogue"))))
 	{
+		LockMovement();
+		
 		IInteractableRH::Execute_Interact(ClosestInteractable, this);
 		UE_LOG(LogTemp, Warning, TEXT("%s interacted with %s"), *GetName(), *ClosestInteractable->GetName());
+		return;
 	}
+	
+	IInteractableRH::Execute_Interact(ClosestInteractable, this);
+}
+
+void ABaseCharacter::UnlockMovement()
+{
+	if (!bMovementLocked)
+		return;
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		PlayerController->SetIgnoreMoveInput(false);
+		PlayerController->SetIgnoreLookInput(false);
+	}
+
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+
+	bMovementLocked = false;
 }
 
 

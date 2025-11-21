@@ -51,6 +51,12 @@ protected:
 
 	UFUNCTION()
 	void DestroyCharacter();
+	
+	UPROPERTY(Transient)
+	bool bMovementLocked = false;
+
+	// internal helper
+	void LockMovement();
 
 public:	
 	// Called every frame
@@ -81,6 +87,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void TryInteract();
+	
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	void UnlockMovement();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionDistance = 300.0f;
