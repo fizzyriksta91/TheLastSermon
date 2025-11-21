@@ -34,7 +34,7 @@ void ACampFireRH::Tick(float DeltaTime)
 
 }
 
-void ACampFireRH::Interact_Implementation(AActor* InteractingActor)
+void ACampFireRH::Interact_Implementation(ABaseCharacter* InteractingActor)
 {
 	if (!InteractingActor)
 		return;

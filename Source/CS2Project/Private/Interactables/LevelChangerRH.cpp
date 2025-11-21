@@ -19,7 +19,7 @@ ALevelChangerRH::ALevelChangerRH()
 
 }
 
-void ALevelChangerRH::Interact_Implementation(AActor* InteractingActor)
+void ALevelChangerRH::Interact_Implementation(ABaseCharacter* InteractingActor)
 {
 	IInteractableRH::Interact_Implementation(InteractingActor);
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "InteractableRH.h"
 #include "GameFramework/Actor.h"
+#include "PlayerCharacters/BaseCharacter.h"
 #include "CampFireRH.generated.h"
 
 UCLASS()
@@ -30,6 +31,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Interact_Implementation(AActor* InteractingActor) override;
+	virtual void Interact_Implementation(ABaseCharacter* InteractingActor) override;
 
 };

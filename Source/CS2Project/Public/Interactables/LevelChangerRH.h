@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "InteractableRH.h"
+#include "PlayerCharacters/BaseCharacter.h"
 #include "LevelChangerRH.generated.h"
 
 UCLASS()
@@ -19,7 +20,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
 	FName LevelName;
 
-	virtual void Interact_Implementation(AActor* InteractingActor) override;
+	virtual void Interact_Implementation(ABaseCharacter* InteractingActor) override;
 
 protected:
 	// Called when the game starts or when spawned

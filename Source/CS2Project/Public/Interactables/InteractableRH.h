@@ -24,5 +24,8 @@ class CS2PROJECT_API IInteractableRH
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	void Interact(AActor* InteractingActor);
+	void Interact(ABaseCharacter* InteractingActor);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void LeaveDialogue();
 };
