@@ -7,7 +7,15 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Pawn.h"
 
+static constexpr float StationaryVelocityThreshold = 10.0f;
 
+static bool IsPawnMoving(const APawn* Pawn)
+{
+	if (!Pawn) return false;
+
+	const FVector Velocity = Pawn->GetVelocity();
+	return Velocity.Size2D() > StationaryVelocityThreshold;
+}
 // Sets default values
 ASharedCamera::ASharedCamera()
 {
@@ -133,7 +141,11 @@ void ASharedCamera::ClampPlayersToBoundary(const FVector& Center, TArray<APawn*>
 {
 	for (APawn* Player : Players)
 	{
-		if (!Player) continue;
+		if (!Player) 
+			continue;
+		
+		if (!IsPawnMoving(Player)) 
+			continue;
 
 		FVector PlayerLocation = Player->GetActorLocation();
 		FVector Difference = PlayerLocation - Center;

@@ -77,4 +77,6 @@ private:
 	FVector ComputeCenter(const TArray<APawn*>& Players) const;
 	
 	float ComputeSeparation(const TArray<APawn*>& Players) const;
+	
+	
 };
