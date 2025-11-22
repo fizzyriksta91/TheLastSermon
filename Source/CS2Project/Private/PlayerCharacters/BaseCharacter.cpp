@@ -246,6 +246,11 @@ void ABaseCharacter::TryInteract()
 			}
 		}
 	}
+	
+	if (!ClosestInteractable)
+	{
+		return;
+	}
 
 	if (ClosestInteractable->ActorHasTag(FName(TEXT("Dialogue"))))
 	{
