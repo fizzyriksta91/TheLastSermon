@@ -11,7 +11,7 @@
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
-
+#include "UI/HealthBarRH.h"
 
 
 // Sets default values
@@ -128,6 +128,30 @@ float ABaseCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	UAISense_Damage::ReportDamageEvent(
 		GetWorld(), this, DamageCauser, ActualDamage,
 		GetActorLocation(),GetActorLocation());
+	
+	if (ActualDamage > 0.0f)
+	{
+		if (UWidgetComponent* WidgetComp = FindComponentByClass<UWidgetComponent>())
+		{
+			WidgetComp->InitWidget(); // ensure instance exists
+			
+			WidgetComp->SetHiddenInGame(false);
+			WidgetComp->SetVisibility(true);
+			
+			if (UUserWidget* UserWidget = WidgetComp->GetUserWidgetObject())
+			{
+				// Force visible so the world widget appears when damaged
+				UserWidget->SetVisibility(ESlateVisibility::Visible);
+
+				// If your widget expects SetPlayerCharacter, re-assign to be safe
+				if (UHealthBarRH* HB = Cast<UHealthBarRH>(UserWidget))
+				{
+					HB->SetPlayerCharacter(this);
+				}
+			}
+		}
+	}
+
 
 	// checks of StatsComp is valid and health is 0 or below, then calls OnDeath
 	if (StatsComp && StatsComp->Stats[EStatsRH::Health] <= 0.0f)

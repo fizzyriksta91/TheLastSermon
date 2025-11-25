@@ -5,9 +5,11 @@
 
 #include "AI/EnemyAIControllerRH.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
+#include "UI/HealthBarRH.h"
 
 AEnemyBaseCharacter::AEnemyBaseCharacter()
 {
