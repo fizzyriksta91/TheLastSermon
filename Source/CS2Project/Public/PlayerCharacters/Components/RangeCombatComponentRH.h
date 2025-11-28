@@ -18,6 +18,9 @@ class CS2PROJECT_API URangeCombatComponentRH : public UActorComponent
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* ChargeAttackMontage;
 	
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* ChargeStartMontage;
+	
 	FTimerHandle PrimaryFireSpawnTimerHandle;
 	
 	FTimerHandle ChargeShotSpawnTimerHandle;

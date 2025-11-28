@@ -71,7 +71,7 @@ void URangeCombatComponentRH::PerformPrimaryRangedAttack()
 	if (PrimaryAttackMontage && CharacterRef)
 	{
 		float MontageDuration = CharacterRef->PlayAnimMontage(PrimaryAttackMontage);
-		float SpawnDelay = FMath::Min(MontageDuration, 0.1f); 
+		float SpawnDelay = FMath::Min(MontageDuration, 0.2f); 
 		GetWorld()->GetTimerManager().SetTimer(
 			PrimaryFireSpawnTimerHandle, this,
 			&URangeCombatComponentRH::SpawnPrimaryProjectile,
@@ -118,6 +118,11 @@ void URangeCombatComponentRH::StartChargeShot()
 	}
 
 	bIsCharging = true;
+	
+	if (ChargeStartMontage && CharacterRef)
+	{
+		CharacterRef->PlayAnimMontage(ChargeStartMontage);
+	}
 
 	// Start timer to fire charge shot
 	GetWorld()->GetTimerManager().SetTimer(
@@ -136,6 +141,11 @@ void URangeCombatComponentRH::CancelChargeShot()
 	{
 		Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
+	
+	if (ChargeStartMontage && CharacterRef)
+	{
+		CharacterRef->PlayAnimMontage(ChargeStartMontage);
+	}
 
 	// Clear Timer
 	GetWorld()->GetTimerManager().ClearTimer(ChargeShotTimerHandle);
@@ -147,11 +157,16 @@ void URangeCombatComponentRH::CancelChargeShot()
 void URangeCombatComponentRH::FireChargeShot()
 {
 	if (!ProjectileClass || !CharacterRef) return;
+	
+	if (ChargeStartMontage && CharacterRef)
+	{
+		CharacterRef->StopAnimMontage(ChargeStartMontage);
+	}
 
 	if (ChargeAttackMontage && CharacterRef)
 	{
 		float MontageDuration = CharacterRef->PlayAnimMontage(ChargeAttackMontage);
-		float SpawnDelay = FMath::Min(MontageDuration, 0.1f); // adjust to sync with animation
+		float SpawnDelay = FMath::Min(MontageDuration, 0.2f); // adjust to sync with animation
 		GetWorld()->GetTimerManager().SetTimer(
 			ChargeShotSpawnTimerHandle, this,
 			&URangeCombatComponentRH::SpawnChargeProjectile,
