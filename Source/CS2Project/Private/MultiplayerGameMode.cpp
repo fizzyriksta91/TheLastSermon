@@ -11,7 +11,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacters/BaseCharacter.h"
-#include "TimerManager.h"
 
 // Adds a local player to the game
 void AMultiplayerGameMode::AddLocalPlayer()
@@ -95,25 +94,35 @@ void AMultiplayerGameMode::NotifyCharacterDeath(ABaseCharacter* DeadCharacter)
 
 			APawn* Pawn = PC->GetPawn();
 			ABaseCharacter* Character = Cast<ABaseCharacter>(Pawn);
-
+			
 			if (Character && Character->IsDead())
 			{
-				// If no delay configured, show immediately.
-				if (PlayerDeathUIDelay <= KINDA_SMALL_NUMBER)
-				{
-					ShowPlayerDeathUI(PC);
-				}
-				else
-				{
-					// Reset any existing timer for this controller and set a new one.
-					FTimerHandle& Handle = PlayerDeathTimerMap.FindOrAdd(PC);
-					GetWorldTimerManager().ClearTimer(Handle);
+				UUserWidget** FoundWidgetPtr = PlayerDeathWidgetMap.Find(PC);
+				UUserWidget* DeathWidget = FoundWidgetPtr ? *FoundWidgetPtr : nullptr;
 
-					FTimerDelegate Delegate = FTimerDelegate::CreateUObject(this, &AMultiplayerGameMode::ShowPlayerDeathUI, PC);
-					GetWorldTimerManager().SetTimer(Handle, Delegate, PlayerDeathUIDelay, false);
+				if (!DeathWidget && PlayerDeathWidgetClass)
+				{
+					
+					DeathWidget = CreateWidget<UUserWidget>(PC, PlayerDeathWidgetClass);
+					if (DeathWidget)
+					{
+						PlayerDeathWidgetMap.Add(PC, DeathWidget);
+					}
+				}
+
+				if (DeathWidget)
+				{
+					DeathWidget->AddToViewport();
+					PC->bShowMouseCursor = true;
+					FInputModeUIOnly InputMode;
+					InputMode.SetWidgetToFocus(DeathWidget->TakeWidget());
+					PC->SetInputMode(InputMode);
+					UGameplayStatics::SetGamePaused(GetWorld(), true);
 				}
 			}
 		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Players died -> showing death UI for local player(s)"));
 	}
 }
 
@@ -163,47 +172,5 @@ void AMultiplayerGameMode::ShowBossDefeatUI()
 
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
-}
-
-void AMultiplayerGameMode::ShowPlayerDeathUI(APlayerController* PC)
-{
-	if (!PC || !GetWorld() || !PlayerDeathWidgetClass)
-		return;
-
-	APawn* Pawn = PC->GetPawn();
-	ABaseCharacter* Character = Cast<ABaseCharacter>(Pawn);
-	if (!(Character && Character->IsDead()))
-	{
-		// Only show if the character is still dead / valid for this controller.
-		PlayerDeathTimerMap.Remove(PC);
-		return;
-	}
-
-	UUserWidget** FoundWidgetPtr = PlayerDeathWidgetMap.Find(PC);
-	UUserWidget* DeathWidget = FoundWidgetPtr ? *FoundWidgetPtr : nullptr;
-
-	if (!DeathWidget && PlayerDeathWidgetClass)
-	{
-		DeathWidget = CreateWidget<UUserWidget>(PC, PlayerDeathWidgetClass);
-		if (DeathWidget)
-		{
-			PlayerDeathWidgetMap.Add(PC, DeathWidget);
-		}
-	}
-
-	if (DeathWidget)
-	{
-		DeathWidget->AddToViewport();
-		PC->bShowMouseCursor = true;
-		FInputModeUIOnly InputMode;
-		InputMode.SetWidgetToFocus(DeathWidget->TakeWidget());
-		PC->SetInputMode(InputMode);
-
-		// Keep existing behavior: pause the local session (note: this pauses the whole game).
-		UGameplayStatics::SetGamePaused(GetWorld(), true);
-	}
-
-	// Clear stored timer handle now that it fired.
-	PlayerDeathTimerMap.Remove(PC);
 }
 

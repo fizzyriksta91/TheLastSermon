@@ -51,5 +51,4 @@ private:
 	UPROPERTY()
 	TMap<APlayerController*, FTimerHandle> PlayerDeathTimerMap;
 	
-	void ShowPlayerDeathUI(APlayerController* PC);
 };
