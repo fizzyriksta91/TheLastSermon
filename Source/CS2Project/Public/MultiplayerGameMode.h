@@ -29,6 +29,12 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	float BossDefeatUIDelay = 2.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerDeathWidgetClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	float PlayerDeathUIDelay = 0.5f;
 
 protected:
 	UPROPERTY()
@@ -38,4 +44,12 @@ private:
 	void ShowBossDefeatUI();
 
 	FTimerHandle BossDefeatTimerHandle;
+	
+	UPROPERTY()
+	TMap<APlayerController*, UUserWidget*> PlayerDeathWidgetMap;
+	
+	UPROPERTY()
+	TMap<APlayerController*, FTimerHandle> PlayerDeathTimerMap;
+	
+	void ShowPlayerDeathUI(APlayerController* PC);
 };
