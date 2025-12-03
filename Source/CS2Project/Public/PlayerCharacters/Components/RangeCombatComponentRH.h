@@ -92,4 +92,12 @@ private:
 
 	UFUNCTION()
 	void ReEnableMovementAfterPrimaryFire();
+	
+	UFUNCTION()
+	void ReEnableMovementAfterChargeShot();
+	
+	FTimerHandle ChargeShotMovementTimerHandle;
+	
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float ChargeAttackMovementLockDuration { 0.1f };
 };

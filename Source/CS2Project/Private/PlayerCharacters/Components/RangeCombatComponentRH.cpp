@@ -136,10 +136,11 @@ void URangeCombatComponentRH::CancelChargeShot()
 {
 	if (!bIsCharging) { return; }
 
-	// Re-enable character movement
+	// Re-enable character movement and stop any charge montages
 	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
 	{
 		Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
 		if (ChargeStartMontage)
 		{
 			Character->StopAnimMontage(ChargeStartMontage);
@@ -150,8 +151,13 @@ void URangeCombatComponentRH::CancelChargeShot()
 		}
 	}
 
-	// Clear Timer
-	GetWorld()->GetTimerManager().ClearTimer(ChargeShotTimerHandle);
+	// Clear all timers related to the charge shot
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ChargeShotTimerHandle);
+		GetWorld()->GetTimerManager().ClearTimer(ChargeShotSpawnTimerHandle);
+		GetWorld()->GetTimerManager().ClearTimer(ChargeShotMovementTimerHandle);
+	}
 
 	bIsCharging = false;
 	UE_LOG(LogTemp, Display, TEXT("Charge shot cancelled"));
@@ -160,26 +166,52 @@ void URangeCombatComponentRH::CancelChargeShot()
 void URangeCombatComponentRH::FireChargeShot()
 {
 	if (!ProjectileClass || !CharacterRef) return;
-	
+
+	// Ensure any start montage is stopped
 	if (ChargeStartMontage && CharacterRef)
 	{
 		CharacterRef->StopAnimMontage(ChargeStartMontage);
 	}
 
+	// Lock movement while the attack montage / spawn sequence runs
+	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+	{
+		Character->GetCharacterMovement()->DisableMovement();
+	}
+
 	if (ChargeAttackMontage && CharacterRef)
 	{
 		float MontageDuration = CharacterRef->PlayAnimMontage(ChargeAttackMontage);
-		float SpawnDelay = FMath::Min(MontageDuration, 0.2f); // adjust to sync with animation
-		GetWorld()->GetTimerManager().SetTimer(
-			ChargeShotSpawnTimerHandle, this,
-			&URangeCombatComponentRH::SpawnChargeProjectile,
-			SpawnDelay, false);
+		float SpawnDelay = FMath::Min(MontageDuration, 0.2f); // sync spawn
+		float LockDuration = (MontageDuration > 0.0f) ? MontageDuration : ChargeAttackMovementLockDuration;
+		
+		if (GetWorld())
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				ChargeShotMovementTimerHandle, this,
+				&URangeCombatComponentRH::ReEnableMovementAfterChargeShot,
+				LockDuration, false);
+		}
+
+		if (GetWorld())
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				ChargeShotSpawnTimerHandle, this,
+				&URangeCombatComponentRH::SpawnChargeProjectile,
+				SpawnDelay, false);
+		}
 	}
 	else
 	{
+		if (GetWorld())
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				ChargeShotMovementTimerHandle, this,
+				&URangeCombatComponentRH::ReEnableMovementAfterChargeShot,
+				ChargeAttackMovementLockDuration, false);
+		}
 		SpawnChargeProjectile();
 	}
-	
 }
 
 void URangeCombatComponentRH::SpawnPrimaryProjectile()
@@ -225,7 +257,6 @@ void URangeCombatComponentRH::SpawnChargeProjectile()
 
 	if (AProjectileBaseRH* Projectile = Cast<AProjectileBaseRH>(SpawnedProjectile))
 	{
-		CharacterRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		Projectile->DamageType = EDamageTypesRH::ChargeShot;
 		if (ICombatRH* CombatInterface = Cast<ICombatRH>(CharacterRef))
 		{
@@ -263,5 +294,17 @@ void URangeCombatComponentRH::ReEnableMovementAfterPrimaryFire()
 		{
 			Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		}
+	}
+}
+
+void URangeCombatComponentRH::ReEnableMovementAfterChargeShot()
+{
+	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
+	{
+		Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ChargeShotMovementTimerHandle);
 	}
 }
