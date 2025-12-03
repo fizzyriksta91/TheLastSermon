@@ -140,11 +140,14 @@ void URangeCombatComponentRH::CancelChargeShot()
 	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
 	{
 		Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	}
-	
-	if (ChargeStartMontage && CharacterRef)
-	{
-		CharacterRef->PlayAnimMontage(ChargeStartMontage);
+		if (ChargeStartMontage)
+		{
+			Character->StopAnimMontage(ChargeStartMontage);
+		}
+		if (ChargeAttackMontage)
+		{
+			Character->StopAnimMontage(ChargeAttackMontage);
+		}
 	}
 
 	// Clear Timer
