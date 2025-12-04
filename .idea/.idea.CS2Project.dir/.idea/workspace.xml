@@ -7,7 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b909b8cc-1205-40ed-bdab-23d2f93ce362" name="Changes" comment="" />
+    <list default="true" id="b909b8cc-1205-40ed-bdab-23d2f93ce362" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/GameMaps/Outskirts/6/IV/8YLYJL7ALSE86N7KGOQKJ0.uasset" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -131,6 +133,7 @@
       <workItem from="1759311844606" duration="11000" />
       <workItem from="1764270139259" duration="1129000" />
       <workItem from="1764756633805" duration="690000" />
+      <workItem from="1764796048895" duration="718000" />
     </task>
     <servers />
   </component>
