@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interactables/InteractableRH.h"
 #include "Perception/AISense_Damage.h"
+#include "PhysicsEngine/PhysicsAsset.h"
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
@@ -185,16 +186,43 @@ void ABaseCharacter::OnDeath()
 	// If this character is AI-controlled, enable ragdoll physics and set a timer to destroy the character
 	else
 	{
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		GetMesh()->SetSimulatePhysics(true);
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		
-		if (UWidgetComponent* WidgetComp = FindComponentByClass<UWidgetComponent>())
+		if (!GetMesh())
 		{
-			WidgetComp->DestroyComponent();
+			UE_LOG(LogTemp, Error, TEXT("OnDeath: GetMesh() is null for %s"), *GetName());
 		}
-		
-		// Set a timer to destroy the character after DeathDelay seconds
+		else
+		{
+			// Enable ragdoll physics on the skeletal mesh
+			GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			GetMesh()->SetSimulatePhysics(true);
+
+			// Ensure all bodies simulate and are awake (fixes kinematic bodies from AnimBP)
+			GetMesh()->SetAllBodiesSimulatePhysics(true);
+			GetMesh()->WakeAllRigidBodies();
+
+			// Disable capsule so ragdoll interacts cleanly
+			if (GetCapsuleComponent())
+			{
+				GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			}
+
+			if (UWidgetComponent* WidgetComp = FindComponentByClass<UWidgetComponent>())
+			{
+				WidgetComp->DestroyComponent();
+			}
+
+			const ECollisionEnabled::Type MeshCollision = GetMesh()->GetCollisionEnabled();
+			const bool bMeshSimulating = GetMesh()->IsSimulatingPhysics();
+			UE_LOG(LogTemp, Display, TEXT("OnDeath(after) %s -> Mesh Collision: %d, SimulatingPhysics: %s"),
+				*GetName(),
+				static_cast<int32>(MeshCollision),
+				bMeshSimulating ? TEXT("true") : TEXT("false"));
+		}
+	}
+
+	// Set a timer to destroy the character after DeathDelay seconds
+	if (GetWorld())
+	{
 		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
 			&ABaseCharacter::DestroyCharacter, DeathDelay, false);
 	}
