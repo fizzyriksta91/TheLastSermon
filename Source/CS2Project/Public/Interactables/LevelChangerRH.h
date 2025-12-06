@@ -17,7 +17,7 @@ public:
 	// Sets default values for this actor's properties
 	ALevelChangerRH();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
 	FName LevelName;
 
 	virtual void Interact_Implementation(ABaseCharacter* InteractingActor) override;
