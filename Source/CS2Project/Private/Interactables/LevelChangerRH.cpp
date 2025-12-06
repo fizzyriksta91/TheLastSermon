@@ -12,7 +12,12 @@ ALevelChangerRH::ALevelChangerRH()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	USceneComponent* SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
+	RootComponent = SceneRoot;
+	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	StaticMesh->SetupAttachment(RootComponent);
+	
 	InteractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSphere"));
 	InteractionSphere->SetupAttachment(StaticMesh);
 	InteractionSphere->SetSphereRadius(200.f);
