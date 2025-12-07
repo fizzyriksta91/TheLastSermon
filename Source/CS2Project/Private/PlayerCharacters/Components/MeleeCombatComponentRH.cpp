@@ -4,6 +4,7 @@
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
@@ -28,6 +29,14 @@ void UMeleeCombatComponentRH::BeginPlay()
 	CharacterRef =  GetOwner<ACharacter>();
 
 	LastHeavyAttackTime = -HeavyAttackCooldown;
+	
+	if (CharacterRef)
+	{
+		if (UTraceComponentRH* TraceComp = CharacterRef->FindComponentByClass<UTraceComponentRH>())
+		{
+			TraceComp->OnHit.AddDynamic(this, &UMeleeCombatComponentRH::HandleTraceHit);
+		}
+	}
 }
 
 
@@ -112,6 +121,16 @@ void UMeleeCombatComponentRH::PerformHeavyAttack()
 	bCanAttack = false;
 	LastHeavyAttackTime = CurrentTime;
 	CharacterRef->PlayAnimMontage(HeavyAttackMontage);
+}
+
+void UMeleeCombatComponentRH::HandleTraceHit(AActor* HitActor, FVector HitLocation)
+{
+	if (!HitActor || HitActor == GetOwner()) { return; }
+
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, HitLocation);
+	}
 }
 
 void UMeleeCombatComponentRH::RotateTowardsNearestEnemy()

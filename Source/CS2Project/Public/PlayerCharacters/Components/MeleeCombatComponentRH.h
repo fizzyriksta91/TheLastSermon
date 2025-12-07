@@ -7,6 +7,8 @@
 #include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "MeleeCombatComponentRH.generated.h"
 
+class USoundBase; 
+class UTraceComponentRH;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
@@ -67,5 +69,10 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	bool bCanAttack { true };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Audio")
+	USoundBase* HitSound{ nullptr };
+
+	UFUNCTION()
+	void HandleTraceHit(AActor* HitActor, FVector HitLocation);
 	
 };

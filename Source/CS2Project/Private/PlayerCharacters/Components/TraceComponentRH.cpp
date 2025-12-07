@@ -114,6 +114,11 @@ void UTraceComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 		TargetActor->TakeDamage(CharacterDamage,
 			TargetAttackEvent, GetOwner()->GetInstigatorController(), GetOwner());
+		
+		if (OnHit.IsBound())
+		{
+			OnHit.Broadcast(TargetActor, Hit.ImpactPoint);
+		}
 
 		TargetsToIgnore.AddUnique(TargetActor);
 	}

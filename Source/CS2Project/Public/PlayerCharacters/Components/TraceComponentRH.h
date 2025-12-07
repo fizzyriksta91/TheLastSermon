@@ -8,6 +8,8 @@
 #include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "TraceComponentRH.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTraceHitSignature, AActor*, HitActor, FVector, HitLocation);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CS2PROJECT_API UTraceComponentRH : public UActorComponent
@@ -41,6 +43,9 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Trace")
 	TEnumAsByte<ECollisionChannel> TraceChannel { ECC_GameTraceChannel1 };
+	
+	UPROPERTY(BlueprintAssignable, Category = "Trace")
+	FOnTraceHitSignature OnHit;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
