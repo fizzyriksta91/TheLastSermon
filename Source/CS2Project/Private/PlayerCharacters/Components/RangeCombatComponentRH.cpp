@@ -4,10 +4,12 @@
 #include "PlayerCharacters/Components/RangeCombatComponentRH.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerCharacters/ProjectileBaseRH.h"
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Interfaces/CombatRH.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values for this component's properties
 URangeCombatComponentRH::URangeCombatComponentRH()
@@ -28,7 +30,6 @@ void URangeCombatComponentRH::BeginPlay()
 	CharacterRef = GetOwner<ACharacter>();
 	
 }
-
 
 // Called every frame
 void URangeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -119,16 +120,26 @@ void URangeCombatComponentRH::StartChargeShot()
 
 	bIsCharging = true;
 	
+	FVector LocalOffset(110.0f, 0.0f, 30.0f); 
+	FVector SpawnLocation = CharacterRef->GetActorLocation() + 
+		CharacterRef->GetActorRotation().RotateVector(LocalOffset);
+	
+	if (ChargeStartSound && GetWorld())
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ChargeStartSound, SpawnLocation);
+	}
+	
 	if (ChargeStartMontage && CharacterRef)
 	{
 		CharacterRef->PlayAnimMontage(ChargeStartMontage);
 	}
 
-	// Start timer to fire charge shot
+	
+		// Start timer to fire charge shot
 	GetWorld()->GetTimerManager().SetTimer(
 		ChargeShotTimerHandle, this, &URangeCombatComponentRH::FireChargeShot,
 		ChargeShotDuration, false);
-
+	
 	UE_LOG(LogTemp, Display, TEXT("Charging shot"));
 }
 
@@ -218,8 +229,10 @@ void URangeCombatComponentRH::SpawnPrimaryProjectile()
 {
 	if (!ProjectileClass || !CharacterRef) { return; }
 
-	FVector SpawnLocation = CharacterRef->GetActorLocation() +
-		CharacterRef->GetActorForwardVector() * 100.0f;
+	FVector LocalOffset(110.0f, 0.0f, 30.0f); 
+	FVector SpawnLocation = CharacterRef->GetActorLocation() + 
+		CharacterRef->GetActorRotation().RotateVector(LocalOffset);
+	
 	FRotator SpawnRotation = CharacterRef->GetActorRotation();
 
 	FActorSpawnParameters SpawnParameters;
@@ -238,14 +251,21 @@ void URangeCombatComponentRH::SpawnPrimaryProjectile()
 			Projectile->Damage = ICombatRH::Execute_GetDamage(CharacterRef, EDamageTypesRH::GunShot);
 		}
 	}
+	
+	if (PrimaryFireSound && GetWorld())
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), PrimaryFireSound, SpawnLocation);
+	}
 }
 
 void URangeCombatComponentRH::SpawnChargeProjectile()
 {
 	if (!ProjectileClass || !CharacterRef) return;
 
-	FVector SpawnLocation = CharacterRef->GetActorLocation() +
-		CharacterRef->GetActorForwardVector() * 100.0f;
+	FVector LocalOffset(110.0f, 0.0f, 30.0f); 
+	FVector SpawnLocation = CharacterRef->GetActorLocation() + 
+		CharacterRef->GetActorRotation().RotateVector(LocalOffset);
+	
 	FRotator SpawnRotation = CharacterRef->GetActorRotation();
 
 	FActorSpawnParameters SpawnParameters;

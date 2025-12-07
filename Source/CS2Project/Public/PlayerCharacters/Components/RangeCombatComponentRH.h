@@ -32,7 +32,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void TickComponent(
@@ -52,6 +52,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Combat")
 	bool IsCharging() const { return bIsCharging; }
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* PrimaryFireSound = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* ChargeStartSound = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Spawn")
+	USceneComponent* ProjectileSpawnPoint = nullptr;
 
 private:
 	UPROPERTY()
@@ -64,7 +73,7 @@ private:
 	float ShotCooldown { 0.5f };
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
-	float ChargeShotDuration { 2.0f };
+	float ChargeShotDuration { 1.675f };
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float ChargeShotCooldown { 5.0f };
