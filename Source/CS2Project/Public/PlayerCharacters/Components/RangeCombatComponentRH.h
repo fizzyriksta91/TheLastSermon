@@ -58,9 +58,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	USoundBase* ChargeStartSound = nullptr;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Spawn")
-	USceneComponent* ProjectileSpawnPoint = nullptr;
 
 private:
 	UPROPERTY()

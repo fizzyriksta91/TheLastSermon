@@ -45,4 +45,7 @@ public:
 
 	UFUNCTION()
 	void OnDodgeFinished();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* DodgeSound { nullptr };
 };

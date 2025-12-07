@@ -5,6 +5,7 @@
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 #include "PlayerCharacters/Components/RangeCombatComponentRH.h"
 
@@ -83,6 +84,11 @@ void UDodgeComponentRH::Dodge()
 	bIsDodging = true;
 	bIsInvulnerable = true;
 	LastDodgeTime = CurrentTime;
+	
+	if (DodgeSound && GetWorld())
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), DodgeSound, Character->GetActorLocation());
+	}
 
 	// Disable combat during dodge
 	if (MeleeCombatComp)
