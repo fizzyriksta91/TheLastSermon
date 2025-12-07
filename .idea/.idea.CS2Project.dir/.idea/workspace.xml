@@ -8,10 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b909b8cc-1205-40ed-bdab-23d2f93ce362" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Content/Assets/FelixEnvironment/capital/temple/WindowsTemple_mtrl.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Assets/FelixEnvironment/capital/temple/WindowsTemple_mtrl.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Costy/MitisComplete/Mitis_Idle_Anim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Costy/MitisComplete/Mitis_Idle_Anim.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Harry/Ability_R.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Harry/Ability_R.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Maps/Main_Menu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Maps/Main_Menu.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/GameMaps/Outskirts/0/MQ/NSHQZLONC8NA9N7O6CU7YY.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/GameMaps/Outskirts/0/MQ/NSHQZLONC8NA9N7O6CU7YY.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/GameMaps/Outskirts/3/IO/3WXUHY9N1UMJMGI5NF15EO.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/GameMaps/Outskirts/3/IO/3WXUHY9N1UMJMGI5NF15EO.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/GameMaps/Outskirts/5/9T/WFHZVCNOY05NEBS0N1VDJI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/GameMaps/Outskirts/5/9T/WFHZVCNOY05NEBS0N1VDJI.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,6 +139,7 @@
       <workItem from="1764796048895" duration="718000" />
       <workItem from="1764874481743" duration="3614000" />
       <workItem from="1765015169425" duration="762000" />
+      <workItem from="1765071697007" duration="659000" />
     </task>
     <servers />
   </component>
