@@ -8,9 +8,8 @@
 #include "PlayerCharacters/Interfaces/EnemyRH.h"
 #include "EnemyBaseCharacter.generated.h"
 
-/**
- * 
- */
+class USoundBase;
+
 UCLASS()
 class CS2PROJECT_API AEnemyBaseCharacter : public ABaseCharacter , public IEnemyRH
 {
@@ -33,6 +32,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	UAnimMontage* MeleeAttackMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
+	USoundBase* MeleeHitSound;
+	
+	UFUNCTION()
+	void HandleTraceHit(AActor* HitActor, FVector HitLocation);
 
 	virtual void OnDeath() override;
 	

@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 #include "UI/HealthBarRH.h"
@@ -15,6 +16,24 @@
 void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (TraceComp)
+	{
+		TraceComp->OnHit.AddDynamic(this, &AEnemyBaseCharacter::HandleTraceHit);
+	}
+}
+
+void AEnemyBaseCharacter::HandleTraceHit(AActor* HitActor, FVector HitLocation)
+{
+	if (!HitActor || !MeleeHitSound)
+		return;
+
+	// Restrict to player characters
+	ABaseCharacter* HitChar = Cast<ABaseCharacter>(HitActor);
+	if (HitChar && HitChar->IsPlayerControlled())
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, MeleeHitSound, HitLocation);
+	}
 }
 
 // Handle death logic specific to the enemy character
