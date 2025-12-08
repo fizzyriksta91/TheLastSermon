@@ -10,6 +10,7 @@
 class USoundBase; 
 class UTraceComponentRH;
 
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 {

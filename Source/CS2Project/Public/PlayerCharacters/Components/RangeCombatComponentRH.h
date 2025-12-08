@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "RangeCombatComponentRH.generated.h"
 
+class UAudioComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CS2PROJECT_API URangeCombatComponentRH : public UActorComponent
@@ -24,6 +25,9 @@ class CS2PROJECT_API URangeCombatComponentRH : public UActorComponent
 	FTimerHandle PrimaryFireSpawnTimerHandle;
 	
 	FTimerHandle ChargeShotSpawnTimerHandle;
+	
+	UPROPERTY()
+	UAudioComponent* ChargeStartAudioComponent{ nullptr };
 
 public:	
 	// Sets default values for this component's properties

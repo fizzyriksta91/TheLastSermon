@@ -57,7 +57,7 @@ float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
 		Speed = 400.0f;
 		break;
 	case EMovementSpeedRH::Sprint:
-		Speed = 600.0f;
+		Speed = 700.0f;
 		break;
 	}
 	GetCharacterMovement()->MaxWalkSpeed = Speed;

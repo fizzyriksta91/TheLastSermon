@@ -126,7 +126,15 @@ void URangeCombatComponentRH::StartChargeShot()
 	
 	if (ChargeStartSound && GetWorld())
 	{
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ChargeStartSound, SpawnLocation);
+		if (ChargeStartAudioComponent)
+		{
+			ChargeStartAudioComponent->Stop();
+			ChargeStartAudioComponent->DestroyComponent();
+			ChargeStartAudioComponent = nullptr;
+		}
+
+		ChargeStartAudioComponent = UGameplayStatics::SpawnSoundAtLocation(
+			GetWorld(), ChargeStartSound, SpawnLocation);
 	}
 	
 	if (ChargeStartMontage && CharacterRef)
@@ -146,6 +154,13 @@ void URangeCombatComponentRH::StartChargeShot()
 void URangeCombatComponentRH::CancelChargeShot()
 {
 	if (!bIsCharging) { return; }
+	
+	if (ChargeStartAudioComponent)
+	{
+		ChargeStartAudioComponent->Stop();
+		ChargeStartAudioComponent->DestroyComponent();
+		ChargeStartAudioComponent = nullptr;
+	}
 
 	// Re-enable character movement and stop any charge montages
 	if (ACharacter* Character = Cast<ACharacter>(CharacterRef))
