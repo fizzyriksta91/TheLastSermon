@@ -33,6 +33,11 @@ void AEnemyBaseCharacter::OnDeath()
 	}
 }
 
+AEnemyBaseCharacter::AEnemyBaseCharacter()
+{
+	
+}
+
 // Set the enemy's movement speed based on the specified speed type
 float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
 {
