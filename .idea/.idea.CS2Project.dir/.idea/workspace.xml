@@ -7,10 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b909b8cc-1205-40ed-bdab-23d2f93ce362" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CS2Project.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CS2Project.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Sounds/Placeholder/Footsteps/tile/Q_Footsteps_Concrete_RH.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Sounds/Placeholder/Footsteps/tile/Q_Footsteps_Concrete_RH.uasset" afterDir="false" />
-    </list>
+    <list default="true" id="b909b8cc-1205-40ed-bdab-23d2f93ce362" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -140,7 +137,7 @@
       <workItem from="1765071697007" duration="659000" />
       <workItem from="1765079586454" duration="347000" />
       <workItem from="1765102731349" duration="688000" />
-      <workItem from="1765209153331" duration="860000" />
+      <workItem from="1765209153331" duration="1503000" />
     </task>
     <servers />
   </component>
