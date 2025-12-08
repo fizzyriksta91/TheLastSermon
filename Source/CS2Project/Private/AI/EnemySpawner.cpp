@@ -10,9 +10,7 @@
 // Sets default values
 AEnemySpawner::AEnemySpawner()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -30,9 +28,9 @@ void AEnemySpawner::BeginPlay()
 void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
+// Spawns enemies at a random location within the spawn radius
 void AEnemySpawner::SpawnEnemies()
 {
 	if (!EnemyClass)
@@ -44,13 +42,15 @@ void AEnemySpawner::SpawnEnemies()
 	const float TraceUp = 500.f;
 	const float TraceDown = 1000.f;
 	const float GroundOffset =2.f;
+	
 	FVector TraceStart = SpawnLocation + FVector(0.f, 0.f, TraceUp);
 	FVector TraceEnd = SpawnLocation - FVector(0.f, 0.f, TraceDown);
 
 	FHitResult Hit;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
-
+	
+	// Perform line trace to find ground level
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		Hit, TraceStart, TraceEnd, ECC_Visibility, QueryParams);
 
@@ -59,6 +59,7 @@ void AEnemySpawner::SpawnEnemies()
 		SpawnLocation.Z = Hit.Location.Z + GroundOffset;
 	}
 	
+	// Set spawn parameters to handle collision
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride =
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -69,6 +70,7 @@ void AEnemySpawner::SpawnEnemies()
 	if (!SpawnedEnemy)
 		return;
 	
+	// Adjust Z location based on capsule half-height to prevent sinking into ground
 	UCapsuleComponent* Capsule = SpawnedEnemy->FindComponentByClass<UCapsuleComponent>();
 	if (Capsule && bHit)
 	{
@@ -80,8 +82,9 @@ void AEnemySpawner::SpawnEnemies()
 	}
 
 	SpawnedEnemy->SpawnDefaultController();
-
 	AEnemyAIControllerRH* AICont = Cast<AEnemyAIControllerRH>(SpawnedEnemy->GetController());
+	
+	// If no AI controller was spawned, create one manually
 	if (!AICont)
 	{
 		FActorSpawnParameters AIParams;
@@ -91,8 +94,6 @@ void AEnemySpawner::SpawnEnemies()
 		if (NewAI)
 		{
 			NewAI->Possess(SpawnedEnemy);
-			UE_LOG(LogTemp, Warning, TEXT("Spawned and possessed AI controller %s for %s"),
-			 *NewAI->GetName(), *SpawnedEnemy->GetName());
 		}
 		else
 		{
@@ -107,9 +108,9 @@ void AEnemySpawner::SpawnEnemies()
 	}
 	
 	SpawnedEnemy->OnCharacterDeath.AddDynamic(this, &AEnemySpawner::OnEnemyDeath);
-	
 }
 
+// Generates a random spawn location within the defined spawn radius
 FVector AEnemySpawner::GetRandomSpawnLocation() const
 {
 	FVector Origin = GetActorLocation();
@@ -122,6 +123,7 @@ FVector AEnemySpawner::GetRandomSpawnLocation() const
 	return FVector(X, Y, Origin.Z);
 }
 
+// Spawns the specified number of enemies at level start
 void AEnemySpawner::SpawnAllEnemies()
 {
 	if (!EnemyClass)
@@ -131,7 +133,6 @@ void AEnemySpawner::SpawnAllEnemies()
 	{
 		SpawnEnemies();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Spawned %d enemies at level start"), EnemiesToSpawn);
 }
 
 void AEnemySpawner::OnEnemyDeath(ABaseCharacter* DeadEnemy)

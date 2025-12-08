@@ -15,6 +15,7 @@ UBTS_SelectRandomPlayer_RH::UBTS_SelectRandomPlayer_RH()
 	RandomDeviation = 0.2f;
 }
 
+// Select a random player pawn within the search radius and update the blackboard
 void UBTS_SelectRandomPlayer_RH::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
@@ -34,6 +35,7 @@ void UBTS_SelectRandomPlayer_RH::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	TArray<APawn*> ValidTargets;
 	const float SearchRadiusSqr = SearchRadius * SearchRadius;
 	
+	// Filter actors within the search radius
 	for (AActor* Actor : FoundActors)
 	{
 		APawn* TargetPawn = Cast<APawn>(Actor);
@@ -48,6 +50,7 @@ void UBTS_SelectRandomPlayer_RH::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 	if (!Blackboard) return;
 	
+	// Select a random target from valid targets
 	if (ValidTargets.Num() > 0)
 	{
 		APawn* ChosenPawn = ValidTargets[FMath::RandRange(0, ValidTargets.Num() - 1)];

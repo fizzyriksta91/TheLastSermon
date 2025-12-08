@@ -12,42 +12,41 @@ UBTT_KickComboAttackRH::UBTT_KickComboAttackRH()
 	NodeName = TEXT("Kick Combo Attack (Wait For Montage)");
 }
 
+// Execute the kick combo attack task
 EBTNodeResult::Type UBTT_KickComboAttackRH::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AICon = OwnerComp.GetAIOwner();
+	
 	if (!AICon)
-	{
 		return EBTNodeResult::Failed;
-	}
 
 	ABossCharacterRH* BossCharacter = Cast<ABossCharacterRH>(OwnerComp.GetAIOwner()->GetPawn());
+	
 	if (!IsValid(BossCharacter))
-	{
 		return EBTNodeResult::Failed;
-	}
 	
-	
+	// Get the animation instance to bind to montage end event
 	UAnimInstance* AnimInst = BossCharacter->GetMesh() ? BossCharacter->GetMesh()->GetAnimInstance() : nullptr;
 	if (!AnimInst)
 	{
-		// If no anim instance, fall back to just performing combo and succeed immediately.
 		BossCharacter->PerformKickCombo();
 		return EBTNodeResult::Succeeded;
 	}
-
+	
+	// Bind to montage end event and perform the kick combo
 	CachedOwnerComp = &OwnerComp;
 	BoundAnimInstance = AnimInst;
-
 	MontageEndDelegate.BindUObject(this, &UBTT_KickComboAttackRH::OnMontageEnded);
 	BoundAnimInstance->Montage_SetEndDelegate(MontageEndDelegate);
-
 	BossCharacter->PerformKickCombo();
 
 	return EBTNodeResult::InProgress;
 }
 
+// Handle montage end event
 void UBTT_KickComboAttackRH::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
+	// Unbind the delegate to avoid dangling references
 	if (BoundAnimInstance)
 	{
 		MontageEndDelegate.Unbind();
@@ -55,12 +54,14 @@ void UBTT_KickComboAttackRH::OnMontageEnded(UAnimMontage* Montage, bool bInterru
 		BoundAnimInstance = nullptr;
 	}
 
+	// Finish the latent task based on whether the montage was interrupted
 	if (CachedOwnerComp)
 	{
 		const EBTNodeResult::Type Result = bInterrupted ? EBTNodeResult::Failed : EBTNodeResult::Succeeded;
 		FinishLatentTask(*CachedOwnerComp, Result);
 	}
-
+	
+	// Clear cached references
 	CachedOwnerComp = nullptr;
 	BoundAnimInstance = nullptr;
 }

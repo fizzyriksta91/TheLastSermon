@@ -10,8 +10,6 @@
 // Sets default values for this component's properties
 ULockOnComponentRH::ULockOnComponentRH()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
@@ -27,14 +25,17 @@ void ULockOnComponentRH::BeginPlay()
 void ULockOnComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
 }
 
+// Find enemies within a specified radius and lock on
 TArray<AActor*> ULockOnComponentRH::FindEnemiesInRadius(float Radius)
 {
 	TArray<AActor*> FoundEnemies;
 
-	if (!OwnerCharacter) { return FoundEnemies; }
+	if (!OwnerCharacter)
+	{
+		return FoundEnemies;
+	}
 
 	TArray<FHitResult> HitResults;
 	FVector StartLocation = OwnerCharacter->GetActorLocation();
@@ -43,15 +44,14 @@ TArray<AActor*> ULockOnComponentRH::FindEnemiesInRadius(float Radius)
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(OwnerCharacter);
 
+	// Perform the sphere sweep to find enemies
 	bool bHit = GetWorld()->SweepMultiByChannel(
 		HitResults, StartLocation, StartLocation,
 		FQuat::Identity, ECC_Pawn, Sphere, QueryParams);
-
-	// Debug sphere for enemy detection
-	// DrawDebugSphere(GetWorld(), StartLocation, Radius, 32, FColor::Green, false, 2.0f);
 	
 	if (bHit)
 	{
+		// Process hit results to find valid enemies
 		for (const FHitResult& Hit : HitResults)
 		{
 			if (ABaseCharacter* Enemy = Cast<ABaseCharacter>(Hit.GetActor()))
@@ -67,6 +67,7 @@ TArray<AActor*> ULockOnComponentRH::FindEnemiesInRadius(float Radius)
 	return FoundEnemies;
 }
 
+// Find the closest enemy from a list
 AActor* ULockOnComponentRH::FindClosestEnemy(const TArray<AActor*>& Enemies)
 {
 	if (Enemies.Num() == 0 || !OwnerCharacter) { return nullptr; }
@@ -74,7 +75,8 @@ AActor* ULockOnComponentRH::FindClosestEnemy(const TArray<AActor*>& Enemies)
 	AActor* ClosestEnemy = nullptr;
 	float ClosestDistance = FLT_MAX;
 	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-
+	
+	// Iterate through enemies to find the closest one
 	for (AActor* Enemy : Enemies)
 	{
 		float Distance = FVector::Dist(OwnerLocation, Enemy->GetActorLocation());
@@ -88,16 +90,19 @@ AActor* ULockOnComponentRH::FindClosestEnemy(const TArray<AActor*>& Enemies)
 	return ClosestEnemy;
 }
 
+// Rotate the owner character to face the target actor
 void ULockOnComponentRH::RotateTowardsTarget(AActor* Target, float DeltaTime)
 {
-	if (!Target || !OwnerCharacter) { return; }
-
+	if (!Target || !OwnerCharacter) 
+		return;
+	
 	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 	FVector TargetLocation = Target->GetActorLocation();
 
 	FVector Direction = TargetLocation - OwnerLocation;
 	Direction.Z = 0.0f;
 
+	// Smoothly interpolate rotation towards the target
 	if (!Direction.IsNearlyZero())
 	{
 		FRotator TargetRotation = Direction.Rotation();

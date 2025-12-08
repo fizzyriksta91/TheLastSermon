@@ -8,15 +8,12 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
-#include "PlayerCharacters/Interfaces/PlayerRH.h"
 
 
 
 // Sets default values for this component's properties
 UMeleeCombatComponentRH::UMeleeCombatComponentRH()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
@@ -27,9 +24,9 @@ void UMeleeCombatComponentRH::BeginPlay()
 	Super::BeginPlay();
 
 	CharacterRef =  GetOwner<ACharacter>();
-
 	LastHeavyAttackTime = -HeavyAttackCooldown;
 	
+	// Bind to Trace Component's OnHit event
 	if (CharacterRef)
 	{
 		if (UTraceComponentRH* TraceComp = CharacterRef->FindComponentByClass<UTraceComponentRH>())
@@ -65,8 +62,8 @@ void UMeleeCombatComponentRH::PerformLightComboAttack()
 			TraceComp->HandleResetAttack();
 		}
 	}
-
-	// Play Combo Montage
+	
+	// Play Combo Montage and manage combo counter
 	bCanAttack = false;
 	CharacterRef->PlayAnimMontage(LightComboMontages[ComboCounter]);
 	ComboCounter++;
@@ -82,11 +79,13 @@ void UMeleeCombatComponentRH::PerformLightComboAttack()
 		ComboResetDelay, false);
 }
 
+// Reset attack ability
 void UMeleeCombatComponentRH::ResetAttack()
 {
 	bCanAttack = true;
 }
 
+// Reset combo counter
 void UMeleeCombatComponentRH::ResetCombatCounter()
 {
 	ComboCounter = 0;
@@ -95,7 +94,6 @@ void UMeleeCombatComponentRH::ResetCombatCounter()
 // perform Heavy Attack
 void UMeleeCombatComponentRH::PerformHeavyAttack()
 {
-	// Check Cooldown
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 	if (CurrentTime - LastHeavyAttackTime < HeavyAttackCooldown) { return; }
 
@@ -116,16 +114,17 @@ void UMeleeCombatComponentRH::PerformHeavyAttack()
 			TraceComp->HandleResetAttack();
 		}
 	}
-
-	// Play Heavy Attack Montage
+	
 	bCanAttack = false;
 	LastHeavyAttackTime = CurrentTime;
 	CharacterRef->PlayAnimMontage(HeavyAttackMontage);
 }
 
+// Handle hit event from Trace Component
 void UMeleeCombatComponentRH::HandleTraceHit(AActor* HitActor, FVector HitLocation)
 {
-	if (!HitActor || HitActor == GetOwner()) { return; }
+	if (!HitActor || HitActor == GetOwner()) 
+		return;
 
 	if (HitSound)
 	{
@@ -133,6 +132,7 @@ void UMeleeCombatComponentRH::HandleTraceHit(AActor* HitActor, FVector HitLocati
 	}
 }
 
+// Rotate character towards nearest enemy when attacking
 void UMeleeCombatComponentRH::RotateTowardsNearestEnemy()
 {
 	// Find and lock onto nearest enemy when attacking

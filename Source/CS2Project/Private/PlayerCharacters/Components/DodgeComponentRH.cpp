@@ -12,11 +12,7 @@
 // Sets default values for this component's properties
 UDodgeComponentRH::UDodgeComponentRH()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -24,9 +20,6 @@ UDodgeComponentRH::UDodgeComponentRH()
 void UDodgeComponentRH::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
 
@@ -34,30 +27,22 @@ void UDodgeComponentRH::BeginPlay()
 void UDodgeComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 // Function to initiate the dodge action
 void UDodgeComponentRH::Dodge()
 {
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
-
-	// If no character or already dodging, return
-	if (!Character || bIsDodging) { return; }
+	
+	if (!Character || bIsDodging) 
+		return;
 
 	float CurrentTime = GetWorld()->GetTimeSeconds();
-    
-	// Check if the dodge is off cooldown
+	
 	if (CurrentTime - LastDodgeTime < DodgeCooldown)
-	{
 		return;
-	}
-
-	// Check melee combat component
+	
 	UMeleeCombatComponentRH* MeleeCombatComp = GetOwner()->FindComponentByClass<UMeleeCombatComponentRH>();
-    
-	// Check ranged combat component
 	URangeCombatComponentRH* RangeCombatComp = GetOwner()->FindComponentByClass<URangeCombatComponentRH>();
 
 	// Can only dodge if not attacking
@@ -72,11 +57,12 @@ void UDodgeComponentRH::Dodge()
 		bCanDodge = false;
 	}
 
-	if (!bCanDodge) { return; }
-
-	// Play dodge animation
+	if (!bCanDodge) 
+		return;
+	
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
-	if (!AnimInstance || !DodgeMontage) { return; }
+	if (!AnimInstance || !DodgeMontage) 
+		return; 
 
 	// Start dodge and set timer
 	float DodgeDuration = 0.5f;

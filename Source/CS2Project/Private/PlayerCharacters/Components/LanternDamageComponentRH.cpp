@@ -9,11 +9,7 @@
 // Sets default values for this component's properties
 ULanternDamageComponentRH::ULanternDamageComponentRH()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -30,6 +26,7 @@ void ULanternDamageComponentRH::BeginPlay()
 			*CharacterRef->GetName());
 	}
 
+	// Start the timer to apply darkness damage at regular intervals
 	GetWorld()->GetTimerManager().SetTimer(
 		DamageTimerHandle, this, &ULanternDamageComponentRH::ApplyDarknessDamage,
 		DamageTickrate, true);
@@ -41,29 +38,29 @@ void ULanternDamageComponentRH::BeginPlay()
 void ULanternDamageComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
+// Enter light source
 void ULanternDamageComponentRH::EnterLight(AActor* Lantern)
 {
-	if (!Lantern || ActiveLanterns.Contains(Lantern)) { return; }
+	if (!Lantern || ActiveLanterns.Contains(Lantern)) 
+		return;
 
 	ActiveLanterns.AddUnique(Lantern);
 	UpdateLightStatus();
-
-	UE_LOG(LogTemp, Display, TEXT("Entered light source: %s"), *Lantern->GetName());
 }
 
+// Exit light source
 void ULanternDamageComponentRH::ExitLight(AActor* Lantern)
 {
 	if (!Lantern) { return; }
 
 	ActiveLanterns.Remove(Lantern);
 	UpdateLightStatus();
-
-	UE_LOG(LogTemp, Display, TEXT("Exited light source: %s"), *Lantern->GetName());
+	
 }
 
+// Apply damage when in darkness 
 void ULanternDamageComponentRH::ApplyDarknessDamage()
 {
 	if (bIsInLight || !CharacterRef) { return; }
@@ -76,6 +73,7 @@ void ULanternDamageComponentRH::ApplyDarknessDamage()
 		*CharacterRef->GetName(), DarknessTickDamage);
 }
 
+// Update status of character within light or darkness
 void ULanternDamageComponentRH::UpdateLightStatus()
 {
 	bIsInLight = ActiveLanterns.Num() > 0;

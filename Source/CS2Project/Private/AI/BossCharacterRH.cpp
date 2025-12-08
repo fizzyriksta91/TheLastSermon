@@ -5,14 +5,13 @@
 
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 
+// perform a kick combo attack
 void ABossCharacterRH::PerformKickCombo()
 {
 	if (!KickComboAnimMontage)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No KickComboAnimMontage"));
 		return;
-	}
 
+	// Set damage type for the trace component
 	if (TraceComp)
 	{
 		TraceComp->SetCurrentDamageType(EDamageTypesRH::KickAttack);
@@ -22,6 +21,7 @@ void ABossCharacterRH::PerformKickCombo()
 	PlayAnimMontage(KickComboAnimMontage);
 }
 
+// set the damage type for the boss character
 void ABossCharacterRH::SetDamageType(TEnumAsByte<EDamageTypesRH> NewType)
 {
 	DamageType = NewType;

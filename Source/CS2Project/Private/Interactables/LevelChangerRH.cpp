@@ -2,7 +2,6 @@
 
 
 #include "Interactables/LevelChangerRH.h"
-
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -24,6 +23,7 @@ ALevelChangerRH::ALevelChangerRH()
 
 }
 
+// Interaction for changing levels
 void ALevelChangerRH::Interact_Implementation(ABaseCharacter* InteractingActor)
 {
 	IInteractableRH::Interact_Implementation(InteractingActor);
@@ -41,13 +41,11 @@ void ALevelChangerRH::Interact_Implementation(ABaseCharacter* InteractingActor)
 void ALevelChangerRH::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void ALevelChangerRH::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

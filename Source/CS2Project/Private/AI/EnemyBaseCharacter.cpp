@@ -11,30 +11,22 @@
 #include "PlayerCharacters/Components/TraceComponentRH.h"
 #include "UI/HealthBarRH.h"
 
-AEnemyBaseCharacter::AEnemyBaseCharacter()
-{
-	
-}
-
 
 void AEnemyBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Handle death logic specific to the enemy character
 void AEnemyBaseCharacter::OnDeath()
 {
 	Super::OnDeath();
-
-	// Notify the AI controller of death
+	
 	AEnemyAIControllerRH* EnemyController = Cast<AEnemyAIControllerRH>(GetController());
 	
 	// Ensure the controller is valid before accessing its blackboard
 	if (EnemyController)
 	{
-		// Set the "IsDead" key in the blackboard to true, unpossess the character and change state to Dead
 		EnemyController->GetBlackboardComponent()->SetValueAsBool(TEXT("IsDead"),true);
 		EnemyController->UnPossess();
 		EnemyController->SetDeadState();
@@ -68,18 +60,14 @@ float AEnemyBaseCharacter::SetMovementSpeed(EMovementSpeedRH SpeedType)
 void AEnemyBaseCharacter::PerformMeleeAttack()
 {
 	if (!MeleeAttackMontage)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No BasicAttackMontage set for enemy"));
 		return;
-	}
 
-	// Set damage type
+	// Set damage type for the trace component
 	if (TraceComp)
 	{
 		TraceComp->SetCurrentDamageType(EDamageTypesRH::LightAttack);
 		TraceComp->HandleResetAttack();
 	}
-
-	// Play attack animation
+	
 	PlayAnimMontage(MeleeAttackMontage);
 }

@@ -16,15 +16,12 @@ ACampFireRH::ACampFireRH()
 	InteractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSphere"));
 	InteractionSphere->SetupAttachment(StaticMesh);
 	InteractionSphere->SetSphereRadius(100.f);
-
 }
 
 // Called when the game starts or when spawned
 void ACampFireRH::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
 
 // Called every frame
@@ -34,6 +31,7 @@ void ACampFireRH::Tick(float DeltaTime)
 
 }
 
+// Heal the interacting actor to full health
 void ACampFireRH::Interact_Implementation(ABaseCharacter* InteractingActor)
 {
 	if (!InteractingActor)
@@ -43,6 +41,5 @@ void ACampFireRH::Interact_Implementation(ABaseCharacter* InteractingActor)
 	if (Character)
 	{
 		Character->HealToFull();
-		UE_LOG(LogTemp, Warning, TEXT("%s healed at campfire!"), *Character->GetName());
 	}
 }

@@ -15,6 +15,7 @@ UBTS_CheckPlayerDistanceRH::UBTS_CheckPlayerDistanceRH()
 	NodeName = TEXT("Check Player Distance");
 }
 
+// Check distance to player and update blackboard
 void UBTS_CheckPlayerDistanceRH::TickNode(
 	UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {

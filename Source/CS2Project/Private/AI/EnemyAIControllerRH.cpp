@@ -12,50 +12,47 @@
 #include "Perception/AISense_Sight.h"
 #include "Math/UnrealMathUtility.h"
 
-
 AEnemyAIControllerRH::AEnemyAIControllerRH()
 {
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 	AttackTarget = nullptr;
-	// Note: The perception delegate is now bound in BeginPlay to ensure the component is fully initialized
 }
 
 void AEnemyAIControllerRH::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Bind the perception delegate here instead of constructor
+	// Bind the perception updated delegate
 	if (AIPerceptionComponent)
 	{
 		AIPerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemyAIControllerRH::OnPerceptionUpdated);
-		UE_LOG(LogTemp, Warning, TEXT("Perception delegate bound"));
 	}
 	
-	// Initialize the blackboard component
 	BlackboardComp = GetBlackboardComponent();
 }
 
+// Called when the AI controller possesses a pawn
 void AEnemyAIControllerRH::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	UE_LOG(LogTemp, Warning, TEXT("OnPossess: %s possessed by %s"), *GetName(), InPawn ? *InPawn->GetName() : TEXT("null"));
-
+	// Start the behavior tree after a short delay to ensure everything is initialized
 	const float StartDelay = 0.3f;
 	if (GetWorld())
 	{
-		GetWorldTimerManager().SetTimer(BehaviorTreeStartTimer, this, &AEnemyAIControllerRH::StartBehaviorTreeDeferred, StartDelay, false);
+		GetWorldTimerManager().SetTimer(BehaviorTreeStartTimer, 
+			this, &AEnemyAIControllerRH::StartBehaviorTreeDeferred, 
+			StartDelay, false);
 	}
-	
 }
 
+// Called when the perception component updates its sensed actors
 void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
 	if (!bBehaviorTreeStarted)
-	{
 		return;
-	}
 
+	// Iterate through all updated actors
 	for (AActor* Actor : UpdatedActors)
 	{
 		if (!IsValidTarget(Actor))
@@ -65,28 +62,27 @@ void AEnemyAIControllerRH::OnPerceptionUpdated(const TArray<AActor*>& UpdatedAct
 		if (CanSenseActor(Actor, EAISenseRH::Sight))
 		{
 			HandleSensedSight(Actor);
-			UE_LOG(LogTemp, Warning, TEXT("Sense Actor Detected"));
 		}
 		if (CanSenseActor(Actor, EAISenseRH::Hearing))
 		{
-			// Logic for when the actor is heard
-			UE_LOG(LogTemp, Warning, TEXT("Hearing Actor Detected"));
+			// Logic for when the actor is heard, potential future implementation
 		}
 		if (CanSenseActor(Actor, EAISenseRH::Damage))
 		{
 			HandleSensedDamage(Actor);
-			UE_LOG(LogTemp, Warning, TEXT("Damage Actor Detected"));
 		}
 	}
 }
 
+// Start the behavior tree after possession is complete
 void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
 {
 	UBehaviorTree* TreeToRun = nullptr;
-
+	
 	APawn* PossessedPawn = GetPawn();
 	if (PossessedPawn)
 	{
+		// Check for a behavior tree override on the possessed pawn
 		if (AEnemyBaseCharacter* EnemyPawn = Cast<AEnemyBaseCharacter>(PossessedPawn))
 		{
 			TreeToRun = EnemyPawn->BehaviorTreeAssetOverride;
@@ -99,11 +95,9 @@ void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
 	}
 
 	if (!TreeToRun)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No BehaviorTreeAsset assigned"));
 		return;
-	}
-
+	
+	//  Run the behavior tree and initialize the blackboard
 	if (RunBehaviorTree(TreeToRun))
 	{
 		BlackboardComp = GetBlackboardComponent();
@@ -114,7 +108,6 @@ void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
 		{
 			AIPerceptionComponent->ForgetAll();
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Behavior tree started (deferred)"));
 	}
 	else
 	{
@@ -122,6 +115,7 @@ void AEnemyAIControllerRH::StartBehaviorTreeDeferred()
 	}
 }
 
+// Check if the given actor is a valid target for the AI
 bool AEnemyAIControllerRH::IsValidTarget(AActor* Actor) const
 {
 	if (!Actor || Actor == GetPawn())
@@ -260,8 +254,6 @@ EEnemyStatesRH AEnemyAIControllerRH::GetCurrentState() const
 // Handle logic when an actor is sensed by sight
 void AEnemyAIControllerRH::HandleSensedSight(AActor* Actor)
 {
-	UE_LOG(LogTemp, Warning, TEXT(
-		"HandleSensedSight called for actor: %s"), *Actor->GetName());
 
 	// Only switch to attacking state if currently idle
 	EEnemyStatesRH CurrentState = GetCurrentState();
@@ -274,14 +266,11 @@ void AEnemyAIControllerRH::HandleSensedSight(AActor* Actor)
 		UE_LOG(LogTemp, Warning, TEXT(
 			"Already in state %d, not switching to attacking"), (int32)CurrentState);
 	}
-	
 }
 
 // Handle logic when an actor is sensed by damage
 void AEnemyAIControllerRH::HandleSensedDamage(AActor* Actor)
 {
-	UE_LOG(LogTemp, Warning, TEXT(
-		"HandleSensedDamage called for actor: %s"), *Actor->GetName());
 
 	EEnemyStatesRH CurrentState = GetCurrentState();
 	if (CurrentState == EEnemyStatesRH::IdleState)
@@ -298,7 +287,6 @@ void AEnemyAIControllerRH::HandleSensedDamage(AActor* Actor)
 // Check if the AI can sense the given actor with the specified sense
 bool AEnemyAIControllerRH::CanSenseActor(AActor* Actor, EAISenseRH Sense) const
 {
-	// Ensure the actor and perception component are valid
 	if (!IsValidTarget(Actor) || !AIPerceptionComponent)
 		return false;
 

@@ -15,21 +15,20 @@ UBTS_StopAttackingRH::UBTS_StopAttackingRH()
 	RandomDeviation = 0.0f;
 }
 
+// Check if the attack target is dead and update blackboard accordingly
 void UBTS_StopAttackingRH::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-
-	// Get the AI controller
+	
 	AEnemyAIControllerRH* EnemyController = Cast<AEnemyAIControllerRH>(OwnerComp.GetAIOwner());
 	if (!EnemyController || !EnemyController->GetBlackboardComponent())
 		return;
-
-	// Get the current attack target from the blackboard
+	
 	AActor* CurrentTarget = Cast<AActor>(
 		EnemyController->GetBlackboardComponent()->GetValueAsObject(
 			TEXT("AttackTarget")));
 
-	
+	// If there is a current target, check if it's dead
 	if (CurrentTarget)
 	{
 		// Check if the target implements the combat interface and if it's dead

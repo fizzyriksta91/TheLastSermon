@@ -5,18 +5,16 @@
 #include "AI/EnemyAIControllerRH.h"
 #include "AI/EnemyBaseCharacter.h"
 
-
+// Execute the basic melee attack task
 EBTNodeResult::Type UBTT_BasicMeleeAttackRH::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	// Get the enemy character from the AI controller
+	
 	AEnemyBaseCharacter* EnemyCharacter = Cast<AEnemyBaseCharacter>(OwnerComp.GetAIOwner()->GetPawn());
-
-	// Ensure the enemy character is valid
+	
 	if (!IsValid(EnemyCharacter))
-	{
 		return EBTNodeResult::Failed;
-	}
-	// Perform the melee attack
+	
+	
 	EnemyCharacter->PerformMeleeAttack();
 
 	return EBTNodeResult::Succeeded;
