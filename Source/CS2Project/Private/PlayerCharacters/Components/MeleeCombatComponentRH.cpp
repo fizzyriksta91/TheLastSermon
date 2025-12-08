@@ -4,12 +4,13 @@
 #include "PlayerCharacters/Components/MeleeCombatComponentRH.h"
 
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PlayerCharacters/Components/LockOnComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
-
-
 
 // Sets default values for this component's properties
 UMeleeCombatComponentRH::UMeleeCombatComponentRH()
@@ -41,12 +42,74 @@ void UMeleeCombatComponentRH::BeginPlay()
 void UMeleeCombatComponentRH::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+	if (bMovementLocked && CharacterRef)
+	{
+		if (USkeletalMeshComponent* Mesh = CharacterRef->GetMesh())
+		{
+			if (UAnimInstance* AnimInst = Mesh->GetAnimInstance())
+			{
+				// If there is no current montage or it's not playing anymore, unlock.
+				bool bIsPlaying = CurrentAttackMontage && AnimInst->Montage_IsPlaying(CurrentAttackMontage);
+				if (!bIsPlaying)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("MeleeCombat: safety unlock - montage not playing"));
+					UnlockMovement();
+				}
+			}
+			else
+			{
+				// No anim instance — ensure we don't stay locked
+				UE_LOG(LogTemp, Warning, TEXT("MeleeCombat: safety unlock - no AnimInstance"));
+				UnlockMovement();
+			}
+		}
+	}
+}
+
+void UMeleeCombatComponentRH::LockMovement()
+{
+	if (!CharacterRef || bMovementLocked) 
+		return;
+	
+	if (UCharacterMovementComponent* MoveComp = CharacterRef->GetCharacterMovement())
+	{
+		MoveComp->DisableMovement();
+		bMovementLocked = true;
+		UE_LOG(LogTemp, Log, TEXT("MeleeCombat: movement locked"));
+	}
+}
+
+void UMeleeCombatComponentRH::UnlockMovement()
+{
+	if (!CharacterRef || !bMovementLocked) 
+		return;
+	
+	if (UCharacterMovementComponent* MoveComp = CharacterRef->GetCharacterMovement())
+	{
+		MoveComp->SetMovementMode(MOVE_Walking);
+		bMovementLocked = false;
+		UE_LOG(LogTemp, Log, TEXT("MeleeCombat: movement unlocked"));
+	}
+}
+
+void UMeleeCombatComponentRH::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	UE_LOG(LogTemp, Log, TEXT("MeleeCombat: OnAttackMontageEnded called (Interrupted=%s)"),
+		bInterrupted ? TEXT("true") : TEXT("false"));
+	
+	if (Montage && Montage == CurrentAttackMontage)
+	{
+		UnlockMovement();
+		CurrentAttackMontage = nullptr;
+	}
 }
 
 // Light Combo Attack
 void UMeleeCombatComponentRH::PerformLightComboAttack()
 {
-	if (!bCanAttack) { return; }
+	if (!bCanAttack) 
+		return; 
 
 	RotateTowardsNearestEnemy();
 
@@ -65,7 +128,27 @@ void UMeleeCombatComponentRH::PerformLightComboAttack()
 	
 	// Play Combo Montage and manage combo counter
 	bCanAttack = false;
-	CharacterRef->PlayAnimMontage(LightComboMontages[ComboCounter]);
+	
+	if (LightComboMontages.Num() == 0) 
+		return;
+	int SafeIndex = ComboCounter;
+	if (SafeIndex < 0 || SafeIndex >= LightComboMontages.Num()) SafeIndex = 0;
+
+	UAnimMontage* MontageToPlay = LightComboMontages[SafeIndex];
+	if (MontageToPlay && CharacterRef)
+	{
+		if (UAnimInstance* AnimInst = CharacterRef->GetMesh()->GetAnimInstance())
+		{
+			CurrentAttackMontage = MontageToPlay;
+
+			MontageEndDelegate.BindUObject(this, &UMeleeCombatComponentRH::OnAttackMontageEnded);
+			AnimInst->Montage_SetEndDelegate(MontageEndDelegate, MontageToPlay);
+
+			LockMovement();
+		}
+		CharacterRef->PlayAnimMontage(MontageToPlay);
+	}
+
 	ComboCounter++;
 	int MaxCombo{ LightComboMontages.Num() };
 	
@@ -95,9 +178,11 @@ void UMeleeCombatComponentRH::ResetCombatCounter()
 void UMeleeCombatComponentRH::PerformHeavyAttack()
 {
 	float CurrentTime = GetWorld()->GetTimeSeconds();
-	if (CurrentTime - LastHeavyAttackTime < HeavyAttackCooldown) { return; }
+	if (CurrentTime - LastHeavyAttackTime < HeavyAttackCooldown) 
+		return; 
 
-	if (!bCanAttack) { return; }
+	if (!bCanAttack) 
+		return; 
 
 	RotateTowardsNearestEnemy();
 
@@ -117,7 +202,19 @@ void UMeleeCombatComponentRH::PerformHeavyAttack()
 	
 	bCanAttack = false;
 	LastHeavyAttackTime = CurrentTime;
-	CharacterRef->PlayAnimMontage(HeavyAttackMontage);
+	if (HeavyAttackMontage && CharacterRef)
+	{
+		if (UAnimInstance* AnimInst = CharacterRef->GetMesh()->GetAnimInstance())
+		{
+			CurrentAttackMontage = HeavyAttackMontage;
+
+			MontageEndDelegate.BindUObject(this, &UMeleeCombatComponentRH::OnAttackMontageEnded);
+			AnimInst->Montage_SetEndDelegate(MontageEndDelegate, HeavyAttackMontage);
+
+			LockMovement();
+		}
+		CharacterRef->PlayAnimMontage(HeavyAttackMontage);
+	}
 }
 
 // Handle hit event from Trace Component
@@ -149,4 +246,6 @@ void UMeleeCombatComponentRH::RotateTowardsNearestEnemy()
 		}
 	}
 }
+
+
 

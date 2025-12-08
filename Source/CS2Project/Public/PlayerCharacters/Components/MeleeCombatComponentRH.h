@@ -9,6 +9,8 @@
 
 class USoundBase; 
 class UTraceComponentRH;
+class UAnimMontage;
+class ACharacter;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -43,6 +45,20 @@ class CS2PROJECT_API UMeleeCombatComponentRH : public UActorComponent
 	TEnumAsByte<EDamageTypesRH> CurrentDamageType { EDamageTypesRH::None };
 
 	void RotateTowardsNearestEnemy();
+	
+	bool bMovementLocked { false };
+
+	UPROPERTY()
+	UAnimMontage* CurrentAttackMontage { nullptr };
+
+	void LockMovement();
+	
+	void UnlockMovement();
+	
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	FOnMontageEnded MontageEndDelegate;
 
 public:	
 	// Sets default values for this component's properties
