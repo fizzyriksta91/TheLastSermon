@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 #include "SharedCamera.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/AudioComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -132,12 +133,14 @@ void AMultiplayerGameMode::OnBossDefeated()
 	{
 		return;
 	}
-
+	
 	if (BossDefeatUIDelay > KINDA_SMALL_NUMBER)
 	{
 		// Clear any previous timer to avoid duplicates
 		GetWorldTimerManager().ClearTimer(BossDefeatTimerHandle);
-		GetWorldTimerManager().SetTimer(BossDefeatTimerHandle, this, &AMultiplayerGameMode::ShowBossDefeatUI, BossDefeatUIDelay, false);
+		GetWorldTimerManager().SetTimer(BossDefeatTimerHandle, 
+			this, &AMultiplayerGameMode::ShowBossDefeatUI, 
+			BossDefeatUIDelay, false);
 	}
 	else
 	{
@@ -150,6 +153,19 @@ void AMultiplayerGameMode::ShowBossDefeatUI()
 	if (!GetWorld() || !BossDefeatWidgetClass)
 	{
 		return;
+	}
+	
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		TArray<UAudioComponent*> AudioComps;
+		ActorItr->GetComponents<UAudioComponent>(AudioComps);
+		for (UAudioComponent* AC : AudioComps)
+		{
+			if (AC && AC->IsPlaying())
+			{
+				AC->Stop();
+			}
+		}
 	}
 
 	if (!BossDefeatWidget)

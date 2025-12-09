@@ -2,13 +2,14 @@
 
 #include "PlayerCharacters/BaseCharacter.h"
 
+#include "EngineUtils.h"
 #include "MultiplayerGameMode.h"
+#include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interactables/InteractableRH.h"
 #include "Perception/AISense_Damage.h"
-#include "PhysicsEngine/PhysicsAsset.h"
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
 #include "PlayerCharacters/Components/TraceComponentRH.h"
@@ -179,10 +180,25 @@ void ABaseCharacter::OnDeath()
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		DisableInput(nullptr);
 		GetCharacterMovement()->DisableMovement();
-
-		// optional to add Revive or respawn logic.
-		UE_LOG(LogTemp, Warning, TEXT("Player character died, Waiting For Revive"));
-	}
+		
+		if (GetWorld())
+		{
+			// Stop all audio components in the world (covers music and other playing sounds)
+			for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+			{
+				TArray<UAudioComponent*> AudioComps;
+				ActorItr->GetComponents<UAudioComponent>(AudioComps);
+				for (UAudioComponent* AC : AudioComps)
+				{
+					if (AC && AC->IsPlaying())
+					{
+						AC->Stop();
+					}
+				}
+			}
+		}
+	}	
+	
 	// If this character is AI-controlled, enable ragdoll physics and set a timer to destroy the character
 	else
 	{
