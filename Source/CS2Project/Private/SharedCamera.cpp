@@ -91,6 +91,31 @@ float ASharedCamera::ComputeSeparation(const TArray<APawn*>& Players) const
 	return MaxDistance * 2.f;
 }
 
+void ASharedCamera::SetCameraPerspectiveIndexForController(APlayerController* PC, int32 PerspectiveIndex,
+	float BlendTime)
+{
+	UE_LOG(LogTemp, Warning, TEXT("SetCameraPerspectiveIndexForController called with index: %d"), PerspectiveIndex);
+
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetCameraPerspectiveIndexForController: PC is null"));
+		return;
+	}
+
+	if (!CameraPerspectives.IsValidIndex(PerspectiveIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetCameraPerspectiveIndexForController: Index out of range: %d"), PerspectiveIndex);
+		return;
+	}
+
+	CurrentPerspectiveIndex = PerspectiveIndex;
+
+	// Set view target for the specific player controller (use blend if desired)
+	PC->SetViewTargetWithBlend(this, FMath::Max(0.f, BlendTime));
+	UE_LOG(LogTemp, Warning, TEXT("SetCameraPerspectiveIndexForController: set view target for PC"));
+
+}
+
 void ASharedCamera::SetCameraPerspectiveIndex(int32 PerspectiveIndex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("SetCameraPerspectiveIndex called with index: %d"), PerspectiveIndex);

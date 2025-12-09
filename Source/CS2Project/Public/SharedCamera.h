@@ -54,6 +54,11 @@ public:
 
 	UPROPERTY(EditAnywhere,  Category = "Camera|Boundary")
 	float BoundaryRadius  { 500.f };
+	
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetCameraPerspectiveIndexForController(
+		APlayerController* PC, int32 PerspectiveIndex, float BlendTime = 0.8f);
+
 
 	UPROPERTY(EditAnywhere,  Category = "Camera")
 	TArray<FRotator> CameraPerspectives = {
@@ -65,7 +70,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	int32 CurrentPerspectiveIndex = 0;
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void SetCameraPerspectiveIndex(int32 PerspectiveIndex);
 
