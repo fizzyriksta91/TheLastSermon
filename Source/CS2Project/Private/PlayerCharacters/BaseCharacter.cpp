@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interactables/InteractableRH.h"
+#include "Kismet/GameplayStatics.h"
 #include "Perception/AISense_Damage.h"
 #include "PlayerCharacters/Components/DodgeComponentRH.h"
 #include "PlayerCharacters/Components/StatsComponentRH.h"
@@ -225,6 +226,14 @@ void ABaseCharacter::OnDeath()
 			if (UWidgetComponent* WidgetComp = FindComponentByClass<UWidgetComponent>())
 			{
 				WidgetComp->DestroyComponent();
+			}
+			
+			if (!DeathSound)
+				return;
+			
+			if (DeathSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
 			}
 
 			const ECollisionEnabled::Type MeshCollision = GetMesh()->GetCollisionEnabled();

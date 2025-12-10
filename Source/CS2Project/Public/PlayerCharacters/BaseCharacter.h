@@ -7,14 +7,15 @@
 #include "Interfaces/CombatRH.h"
 #include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "BaseCharacter.generated.h"
+
+class USoundBase;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDeath, ABaseCharacter*, DeadCharacter);
 
 UCLASS()
 class CS2PROJECT_API ABaseCharacter : public ACharacter , public ICombatRH
 {
 	GENERATED_BODY()
-
-	
 
 public:
 	// Sets default values for this character's properties
@@ -99,4 +100,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Character")
 	bool IsBoss() const { return bIsBoss; }
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Audio")
+	USoundBase* DeathSound { nullptr };
 };
