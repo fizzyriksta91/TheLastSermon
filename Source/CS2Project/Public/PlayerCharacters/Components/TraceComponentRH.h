@@ -8,7 +8,8 @@
 #include "PlayerCharacters/Enums/EDamageTypesRH.h"
 #include "TraceComponentRH.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTraceHitSignature, AActor*, HitActor, FVector, HitLocation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+	FOnTraceHitSignature, AActor*, HitActor, FVector, HitLocation);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
